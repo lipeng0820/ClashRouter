@@ -4,15 +4,6 @@ import json
 md_path = "/Users/pengli/Desktop/Clash 分流升级/分流规则参考.md"
 v2b_dir = "/Users/pengli/Desktop/Clash 分流升级/v2b"
 
-HARDBONES = [
-    "corp.kuaishou.com", "kuaishou.com", "streamlake.com", "streamlake.ai",
-    "todesk.com", "oray.com", "oray.cn", "sunlogin.net", "sunlogin.com",
-    "cmbchina.com", "cmbchina.cn", "pingan.com", "pingan.com.cn", "spdb.com.cn",
-    "alipayhk.com", "alipay.hk", "hsbc.com.hk", "hsbc.com", "bochk.com", "za.group", "antbank.hk",
-    "futunn.com", "futu5.com", "futuhk.com",
-    "alipay.com", "alipayobjects.com", "antgroup.com", "amap.com", "taobao.com", "alibaba.com"
-]
-
 def parse_md_rules(md_path):
     with open(md_path, 'r', encoding='utf-8') as f:
         md_lines = f.readlines()
@@ -77,57 +68,18 @@ def process_clash(file_path, rules):
         return
         
     new_lines = []
-    # Copy until rules:
     for l in lines[:rules_start+1]:
-        # Filter out previous hardbone injections so we don't duplicate
-        skip = False
-        for hb in HARDBONES:
-            if l.strip() == f'- "*.{hb}"' or l.strip() == f'- "{hb}"':
-                skip = True
-            if l.strip() == f'"+.{hb}": "system"' or l.strip() == f'"{hb}": "system"':
-                skip = True
-            if l.strip() == f'"+.{hb}": "dhcp://system"' or l.strip() == f'"{hb}": "dhcp://system"':
-                skip = True
-        if skip: continue
-        
+        if l.startswith('skip-proxy ='):
+            append_list = ', '.join([f'*.{d}, {d}' for d in ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai']])
+            l = l.strip() + ', ' + append_list + '\n'
         new_lines.append(l)
-        if l.strip() == 'fake-ip-filter:':
-            for hb in HARDBONES:
-                new_lines.append(f"    - \"*.{hb}\"\n")
-                new_lines.append(f"    - \"{hb}\"\n")
-                
-    # Inject nameserver-policy for hardbones to dhcp://system
-    ns_idx = -1
-    for idx, l in enumerate(new_lines):
-        if l.strip() == 'nameserver-policy:':
-            ns_idx = idx
-            break
-    if ns_idx != -1:
-        for hb in HARDBONES:
-            new_lines.insert(ns_idx + 1, f"    \"+.{hb}\": \"dhcp://system\"\n")
-            new_lines.insert(ns_idx + 1, f"    \"{hb}\": \"dhcp://system\"\n")
-    else:
-        dns_idx = -1
-        for idx, l in enumerate(new_lines):
-            if l.strip() == 'dns:':
-                dns_idx = idx
-                break
-        if dns_idx != -1:
-            new_lines.insert(dns_idx + 1, "  nameserver-policy:\n")
-            for hb in HARDBONES:
-                new_lines.insert(dns_idx + 2, f"    \"+.{hb}\": \"dhcp://system\"\n")
-                new_lines.insert(dns_idx + 2, f"    \"{hb}\": \"dhcp://system\"\n")
-
-    new_lines.append('\n  # 硬骨头内网放行区 (Highest Priority)\n')
-    for hb in HARDBONES:
+    
+    new_lines.append('\n# 硬骨头强制直连区\n')
+    for hb in ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai']:
+        new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
+    new_lines.append('\n  # 硬骨头强制直连区\n')
+    for hb in ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai']:
         new_lines.append(f'  - DOMAIN-SUFFIX,{hb},DIRECT\n')
-        
-    new_lines.append('\n  # 局域网及核心内网放行区 (LAN Bypass)\n')
-    for cidr in ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "100.64.0.0/10"]:
-        new_lines.append(f'  - IP-CIDR,{cidr},DIRECT\n')
-    for cidr6 in ["::1/128", "fc00::/7", "fe80::/10", "fd00::/8"]:
-        new_lines.append(f'  - IP-CIDR6,{cidr6},DIRECT\n')
-        
     for r in rules:
         policy = '$app_name' if r['policy'] == 'PROXY' else r['policy']
         if r['type'].upper() == 'MATCH':
@@ -136,6 +88,17 @@ def process_clash(file_path, rules):
             opt_str = f",{','.join(r['options'])}" if r['options'] else ""
             new_lines.append(f"  - {r['type']},{r['payload']},{policy}{opt_str}\n")
             
+        
+    inject_idx = -1
+    for idx, l in enumerate(new_lines):
+        if l.strip() == 'fake-ip-filter:':
+            inject_idx = idx
+            break
+    if inject_idx != -1:
+        for hb in ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai']:
+            new_lines.insert(inject_idx + 1, f"    - \"*.{hb}\"\n")
+            new_lines.insert(inject_idx + 1, f"    - \"{hb}\"\n")
+
     with open(file_path, 'w', encoding='utf-8') as f:
         f.writelines(new_lines)
     print(f"Successfully migrated Clash format: {os.path.basename(file_path)}")
@@ -155,25 +118,18 @@ def process_surfboard(file_path, rules):
         return
         
     new_lines = []
-    # Inject into skip-proxy
     for l in lines[:rules_start+1]:
         if l.startswith('skip-proxy ='):
-            missing = [d for d in HARDBONES if d not in l]
-            if missing:
-                append_list = ', '.join([f'*.{d}, {d}' for d in missing])
-                l = l.strip() + ', ' + append_list + '\n'
+            append_list = ', '.join([f'*.{d}, {d}' for d in ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai']])
+            l = l.strip() + ', ' + append_list + '\n'
         new_lines.append(l)
     
-    new_lines.append('\n# 硬骨头内网放行区 (Highest Priority)\n')
-    for hb in HARDBONES:
+    new_lines.append('\n# 硬骨头强制直连区\n')
+    for hb in ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai']:
         new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
-        
-    new_lines.append('\n# 局域网及核心内网放行区 (LAN Bypass)\n')
-    for cidr in ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "100.64.0.0/10"]:
-        new_lines.append(f'IP-CIDR,{cidr},DIRECT,no-resolve\n')
-    for cidr6 in ["::1/128", "fc00::/7", "fe80::/10", "fd00::/8"]:
-        new_lines.append(f'IP-CIDR6,{cidr6},DIRECT,no-resolve\n')
-        
+    new_lines.append('\n  # 硬骨头强制直连区\n')
+    for hb in ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai']:
+        new_lines.append(f'  - DOMAIN-SUFFIX,{hb},DIRECT\n')
     for r in rules:
         policy = '$app_name' if r['policy'] == 'PROXY' else r['policy']
         if r['type'].upper() == 'MATCH':
@@ -182,6 +138,17 @@ def process_surfboard(file_path, rules):
             opt_str = f",{','.join(r['options'])}" if r['options'] else ""
             new_lines.append(f"{r['type']},{r['payload']},{policy}{opt_str}\n")
             
+        
+    inject_idx = -1
+    for idx, l in enumerate(new_lines):
+        if l.strip() == 'fake-ip-filter:':
+            inject_idx = idx
+            break
+    if inject_idx != -1:
+        for hb in ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai']:
+            new_lines.insert(inject_idx + 1, f"    - \"*.{hb}\"\n")
+            new_lines.insert(inject_idx + 1, f"    - \"{hb}\"\n")
+
     with open(file_path, 'w', encoding='utf-8') as f:
         f.writelines(new_lines)
     print(f"Successfully migrated Surfboard format: {os.path.basename(file_path)}")
@@ -209,27 +176,24 @@ def process_shadowrocket(file_path, rules):
     new_lines = []
     for l in lines[:rules_start+1]:
         if l.startswith('skip-proxy ='):
-            missing = [d for d in HARDBONES if d not in l]
-            if missing:
-                append_list = ', '.join([f'*.{d}, {d}' for d in missing])
-                l = l.strip() + ', ' + append_list + '\n'
+            append_list = ', '.join([f'*.{d}, {d}' for d in ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai']])
+            l = l.strip() + ', ' + append_list + '\n'
         new_lines.append(l)
     
-    new_lines.append('\n# 硬骨头内网放行区 (Highest Priority)\n')
-    for hb in HARDBONES:
+    new_lines.append('\n# 硬骨头强制直连区\n')
+    for hb in ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai']:
         new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
-        
-    new_lines.append('\n# 局域网及核心内网放行区 (LAN Bypass)\n')
-    for cidr in ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "100.64.0.0/10"]:
-        new_lines.append(f'IP-CIDR,{cidr},DIRECT,no-resolve\n')
-    for cidr6 in ["::1/128", "fc00::/7", "fe80::/10", "fd00::/8"]:
-        new_lines.append(f'IP-CIDR6,{cidr6},DIRECT,no-resolve\n')
+    new_lines.append('\n  # 硬骨头强制直连区\n')
+    for hb in ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai']:
+        new_lines.append(f'  - DOMAIN-SUFFIX,{hb},DIRECT\n')
     
     for r in rules:
+        # Shadowrocket policy natively uses PROXY instead of $app_name
         policy = 'PROXY' if r['policy'] == 'PROXY' else r['policy']
         if r['type'].upper() == 'MATCH':
             new_lines.append(f"FINAL,{policy}\n")
         elif r['type'].upper() == 'IP-CIDR6':
+            # Shadowrocket uses IP-CIDR6 correctly
             opt_str = f",{','.join(r['options'])}" if r['options'] else ""
             new_lines.append(f"{r['type']},{r['payload']},{policy}{opt_str}\n")
         else:
@@ -239,6 +203,17 @@ def process_shadowrocket(file_path, rules):
     new_lines.append("\n")
     new_lines.extend(lines[rules_end:])
             
+        
+    inject_idx = -1
+    for idx, l in enumerate(new_lines):
+        if l.strip() == 'fake-ip-filter:':
+            inject_idx = idx
+            break
+    if inject_idx != -1:
+        for hb in ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai']:
+            new_lines.insert(inject_idx + 1, f"    - \"*.{hb}\"\n")
+            new_lines.insert(inject_idx + 1, f"    - \"{hb}\"\n")
+
     with open(file_path, 'w', encoding='utf-8') as f:
         f.writelines(new_lines)
     print(f"Successfully migrated Shadowrocket format: {os.path.basename(file_path)}")
@@ -255,34 +230,27 @@ def process_singbox(file_path, rules):
         data['route'] = {}
         
     existing_rules = data['route'].get('rules', [])
-    dns_rules_orig = [x for x in existing_rules if x.get('protocol') == 'dns']
+    dns_rules = [x for x in existing_rules if x.get('protocol') == 'dns']
     
-    new_rules = dns_rules_orig.copy()
+    new_rules = dns_rules.copy()
 
-    if 'dns' not in data:
-        data['dns'] = {"servers": [], "rules": []}
-    
-    has_local = any(s.get('tag') == 'local' for s in data['dns'].get('servers', []))
+    # Hardbone routing logic
+    has_local = any(s.get('tag') == 'local' for s in data['dns']['servers'])
     if not has_local:
-        data['dns'].setdefault('servers', []).append({"tag": "local", "address": "local", "detour": "direct"})
+        data['dns']['servers'].append({"tag": "local", "address": "local", "detour": "direct"})
         
-    # Remove existing hardbone rule if present to avoid duplication
-    dns_rules = [x for x in data['dns'].get('rules', []) if not (set(x.get('domain_suffix', [])) == set(HARDBONES) and x.get('server') == 'local')]
+    dns_rules = data.get('dns', {}).get('rules', [])
     dns_rules.insert(0, {
-        "domain_suffix": HARDBONES,
+        "domain_suffix": ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai'],
         "server": "local"
     })
     data['dns']['rules'] = dns_rules
 
     new_rules.insert(0, {
         "outbound": "direct",
-        "domain_suffix": HARDBONES
+        "domain_suffix": ['corp.kuaishou.com', 'kuaishou.com', 'streamlake.com', 'streamlake.ai']
     })
-    
-    new_rules.insert(1, {
-        "outbound": "direct",
-        "ip_cidr": ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "100.64.0.0/10", "::1/128", "fc00::/7", "fe80::/10", "fd00::/8"]
-    })
+
     
     for r in rules:
         outbound = "proxy"

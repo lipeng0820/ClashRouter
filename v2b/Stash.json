@@ -8,6 +8,18 @@ tcp-concurrent: true
 
 dns:
   nameserver-policy:
+    "alibaba.com": "dhcp://system"
+    "+.alibaba.com": "dhcp://system"
+    "taobao.com": "dhcp://system"
+    "+.taobao.com": "dhcp://system"
+    "amap.com": "dhcp://system"
+    "+.amap.com": "dhcp://system"
+    "antgroup.com": "dhcp://system"
+    "+.antgroup.com": "dhcp://system"
+    "alipayobjects.com": "dhcp://system"
+    "+.alipayobjects.com": "dhcp://system"
+    "alipay.com": "dhcp://system"
+    "+.alipay.com": "dhcp://system"
     "futuhk.com": "dhcp://system"
     "+.futuhk.com": "dhcp://system"
     "futu5.com": "dhcp://system"
@@ -118,6 +130,18 @@ dns:
     - "futu5.com"
     - "*.futuhk.com"
     - "futuhk.com"
+    - "*.alipay.com"
+    - "alipay.com"
+    - "*.alipayobjects.com"
+    - "alipayobjects.com"
+    - "*.antgroup.com"
+    - "antgroup.com"
+    - "*.amap.com"
+    - "amap.com"
+    - "*.taobao.com"
+    - "taobao.com"
+    - "*.alibaba.com"
+    - "alibaba.com"
     - "*.lan"
     - "*.local"
     - "*.localhost"
@@ -156,6 +180,12 @@ rules:
   - DOMAIN-SUFFIX,futunn.com,DIRECT
   - DOMAIN-SUFFIX,futu5.com,DIRECT
   - DOMAIN-SUFFIX,futuhk.com,DIRECT
+  - DOMAIN-SUFFIX,alipay.com,DIRECT
+  - DOMAIN-SUFFIX,alipayobjects.com,DIRECT
+  - DOMAIN-SUFFIX,antgroup.com,DIRECT
+  - DOMAIN-SUFFIX,amap.com,DIRECT
+  - DOMAIN-SUFFIX,taobao.com,DIRECT
+  - DOMAIN-SUFFIX,alibaba.com,DIRECT
 
   # 局域网及核心内网放行区 (LAN Bypass)
   - IP-CIDR,192.168.0.0/16,DIRECT
