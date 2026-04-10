@@ -11,7 +11,7 @@ V2B_DIR = "v2b"
 # Domains in this list are prioritized to bypass proxy and DNS hijacking logic.
 # They are injected at the highest priority in all supported client formats.
 HARDBONES = [
-    # Corporate/Intranet (Anonymized in README, but active here)
+    # Corporate/Intranet (Active Bypass)
     "corp.kuaishou.com", "kuaishou.com", "streamlake.com", "streamlake.ai",
     # Remote Desktop Tools
     "todesk.com", "oray.com", "oray.cn", "sunlogin.net", "sunlogin.com",
@@ -19,8 +19,10 @@ HARDBONES = [
     "cmbchina.com", "cmbchina.cn", "pingan.com", "pingan.com.cn", "spdb.com.cn",
     "alipayhk.com", "alipay.hk", "hsbc.com.hk", "hsbc.com", "bochk.com", "za.group", "antbank.hk",
     "futunn.com", "futu5.com", "futuhk.com",
-    # mPaaS / Alibaba ecosystem telemery used by many HK banking apps
-    "alipay.com", "alipayobjects.com", "antgroup.com", "amap.com", "taobao.com", "alibaba.com"
+    # Alibaba / Taobao / Alipay Ecosystem & Infrastructure (Fix for opendoc/mpaas)
+    "alipay.com", "alipay.cn", "alipayobjects.com", "antgroup.com", "amap.com", 
+    "taobao.com", "alibaba.com", "alicdn.com", "aliyun.com", "aliyuncdn.com", 
+    "tmall.com", "mmstat.com"
 ]
 
 def parse_md_rules(md_path):
@@ -92,19 +94,16 @@ def process_clash(file_path, rules):
         # Filter out previous hardbone injections so we don't duplicate
         skip = False
         for hb in HARDBONES:
-            if l.strip() == f'- "*.{hb}"' or l.strip() == f'- "{hb}"':
+            if l.strip() == f'- "*.{hb}"' or l.strip() == f'- "{hb}"' or l.strip() == f'- "+.{hb}"':
                 skip = True
-            if l.strip() == f'"+.{hb}": "system"' or l.strip() == f'"{hb}": "system"':
-                skip = True
-            if l.strip() == f'"+.{hb}": "dhcp://system"' or l.strip() == f'"{hb}": "dhcp://system"':
+            if l.strip() == f'"+.{hb}": "system"' or l.strip() == f'"{hb}": "system"' or l.strip() == f'"+.{hb}": "dhcp://system"':
                 skip = True
         if skip: continue
         
         new_lines.append(l)
         if l.strip() == 'fake-ip-filter:':
             for hb in HARDBONES:
-                new_lines.append(f"    - \"*.{hb}\"\n")
-                new_lines.append(f"    - \"{hb}\"\n")
+                new_lines.append(f"    - \"+.{hb}\"\n")
                 
     # Inject nameserver-policy for hardbones to dhcp://system
     ns_idx = -1

@@ -1,7 +1,7 @@
 # Surfboard
 [General]
 dns-server = 223.5.5.5, 119.29.29.29, 114.114.114.114
-skip-proxy = 127.0.0.1, 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 100.64.0.0/10, localhost, *.local, *.corp.kuaishou.com, corp.kuaishou.com, *.kuaishou.com, kuaishou.com, *.streamlake.com, streamlake.com, *.streamlake.ai, streamlake.ai, *.todesk.com, todesk.com, *.oray.com, oray.com, *.oray.cn, oray.cn, *.sunlogin.net, sunlogin.net, *.sunlogin.com, sunlogin.com, *.cmbchina.com, cmbchina.com, *.cmbchina.cn, cmbchina.cn, *.pingan.com, pingan.com, *.pingan.com.cn, pingan.com.cn, *.spdb.com.cn, spdb.com.cn, *.alipayhk.com, alipayhk.com, *.alipay.hk, alipay.hk, *.hsbc.com.hk, hsbc.com.hk, *.hsbc.com, hsbc.com, *.bochk.com, bochk.com, *.za.group, za.group, *.antbank.hk, antbank.hk, *.futunn.com, futunn.com, *.futu5.com, futu5.com, *.futuhk.com, futuhk.com, *.alipay.com, alipay.com, *.alipayobjects.com, alipayobjects.com, *.antgroup.com, antgroup.com, *.amap.com, amap.com, *.taobao.com, taobao.com, *.alibaba.com, alibaba.com
+skip-proxy = 127.0.0.1, 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 100.64.0.0/10, localhost, *.local, *.corp.kuaishou.com, corp.kuaishou.com, *.kuaishou.com, kuaishou.com, *.streamlake.com, streamlake.com, *.streamlake.ai, streamlake.ai, *.todesk.com, todesk.com, *.oray.com, oray.com, *.oray.cn, oray.cn, *.sunlogin.net, sunlogin.net, *.sunlogin.com, sunlogin.com, *.cmbchina.com, cmbchina.com, *.cmbchina.cn, cmbchina.cn, *.pingan.com, pingan.com, *.pingan.com.cn, pingan.com.cn, *.spdb.com.cn, spdb.com.cn, *.alipayhk.com, alipayhk.com, *.alipay.hk, alipay.hk, *.hsbc.com.hk, hsbc.com.hk, *.hsbc.com, hsbc.com, *.bochk.com, bochk.com, *.za.group, za.group, *.antbank.hk, antbank.hk, *.futunn.com, futunn.com, *.futu5.com, futu5.com, *.futuhk.com, futuhk.com, *.alipay.com, alipay.com, *.alipayobjects.com, alipayobjects.com, *.antgroup.com, antgroup.com, *.amap.com, amap.com, *.taobao.com, taobao.com, *.alibaba.com, alibaba.com, *.alipay.cn, alipay.cn, *.alicdn.com, alicdn.com, *.aliyun.com, aliyun.com, *.aliyuncdn.com, aliyuncdn.com, *.tmall.com, tmall.com, *.mmstat.com, mmstat.com
 test-timeout = 5
 internet-test-url = http://www.google.com/generate_204
 proxy-test-url = http://www.google.com/generate_204
@@ -43,11 +43,17 @@ DOMAIN-SUFFIX,futunn.com,DIRECT
 DOMAIN-SUFFIX,futu5.com,DIRECT
 DOMAIN-SUFFIX,futuhk.com,DIRECT
 DOMAIN-SUFFIX,alipay.com,DIRECT
+DOMAIN-SUFFIX,alipay.cn,DIRECT
 DOMAIN-SUFFIX,alipayobjects.com,DIRECT
 DOMAIN-SUFFIX,antgroup.com,DIRECT
 DOMAIN-SUFFIX,amap.com,DIRECT
 DOMAIN-SUFFIX,taobao.com,DIRECT
 DOMAIN-SUFFIX,alibaba.com,DIRECT
+DOMAIN-SUFFIX,alicdn.com,DIRECT
+DOMAIN-SUFFIX,aliyun.com,DIRECT
+DOMAIN-SUFFIX,aliyuncdn.com,DIRECT
+DOMAIN-SUFFIX,tmall.com,DIRECT
+DOMAIN-SUFFIX,mmstat.com,DIRECT
 
 # 局域网及核心内网放行区 (LAN Bypass)
 IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
