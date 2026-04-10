@@ -205,16 +205,9 @@
                     "10.0.0.0/8",
                     "172.16.0.0/12",
                     "127.0.0.0/8",
-                    "100.64.0.0/10",
                     "::1/128",
-                    "fc00::/7",
-                    "fe80::/10",
-                    "fd00::/8"
+                    "fc00::/7"
                 ]
-            },
-            {
-                "protocol": "dns",
-                "outbound": "dns-out"
             },
             {
                 "outbound": "direct",
@@ -340,18 +333,6 @@
                 "outbound": "proxy",
                 "domain_suffix": [
                     "generativelanguage.googleapis.com"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    "1drv"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    "microsoft"
                 ]
             },
             {
@@ -54338,18 +54319,6 @@
             },
             {
                 "outbound": "proxy",
-                "domain_keyword": [
-                    "dualstack.apiproxy-"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    "dualstack.ichnaea-web-"
-                ]
-            },
-            {
-                "outbound": "proxy",
                 "ip_cidr": [
                     "23.246.0.0/18"
                 ]
@@ -54476,12 +54445,6 @@
             },
             {
                 "outbound": "proxy",
-                "domain_keyword": [
-                    "jooxweb-api"
-                ]
-            },
-            {
-                "outbound": "proxy",
                 "domain_suffix": [
                     "kkbox.com"
                 ]
@@ -54548,18 +54511,6 @@
             },
             {
                 "outbound": "proxy",
-                "domain_keyword": [
-                    "spotify.com"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    "-spotify-com"
-                ]
-            },
-            {
-                "outbound": "proxy",
                 "domain_suffix": [
                     "tidal.com"
                 ]
@@ -54598,12 +54549,6 @@
                 "outbound": "proxy",
                 "domain_suffix": [
                     "hayabusa.io"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    "abematv.akamaized.net"
                 ]
             },
             {
@@ -54704,12 +54649,6 @@
             },
             {
                 "outbound": "proxy",
-                "domain_keyword": [
-                    "avoddashs"
-                ]
-            },
-            {
-                "outbound": "proxy",
                 "domain": [
                     "linear.tv.apple.com"
                 ]
@@ -54760,18 +54699,6 @@
                 "outbound": "proxy",
                 "domain_suffix": [
                     "bbci.co.uk"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    "bbcfmt"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    "uk-live"
                 ]
             },
             {
@@ -54838,12 +54765,6 @@
                 "outbound": "proxy",
                 "domain": [
                     "d151l6v8er5bdm.cloudfront.net"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    "voddazn"
                 ]
             },
             {
@@ -54988,12 +54909,6 @@
                 "outbound": "proxy",
                 "domain_suffix": [
                     "hbogoasia.hk"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    ".hbogoasia."
                 ]
             },
             {
@@ -55466,18 +55381,6 @@
             },
             {
                 "outbound": "proxy",
-                "domain_keyword": [
-                    "dualstack.apiproxy-"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    "dualstack.ichnaea-web-"
-                ]
-            },
-            {
-                "outbound": "proxy",
                 "ip_cidr": [
                     "23.246.0.0/18"
                 ]
@@ -55726,12 +55629,6 @@
                 "outbound": "proxy",
                 "domain_suffix": [
                     "tiktokv.com"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    "-tiktokcdn-com"
                 ]
             },
             {
@@ -56572,18 +56469,6 @@
                 "outbound": "proxy",
                 "domain_suffix": [
                     "ytimg.com"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    "google"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    ".blogspot."
                 ]
             },
             {
@@ -59312,12 +59197,6 @@
             },
             {
                 "outbound": "proxy",
-                "domain_keyword": [
-                    ".facebook."
-                ]
-            },
-            {
-                "outbound": "proxy",
                 "domain_suffix": [
                     "facebookmail.com"
                 ]
@@ -59686,18 +59565,6 @@
                 "outbound": "proxy",
                 "domain_suffix": [
                     "mzstatic.com"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    "apple.com.akadns.net"
-                ]
-            },
-            {
-                "outbound": "proxy",
-                "domain_keyword": [
-                    "icloud.com.akadns.net"
                 ]
             },
             {
@@ -61600,102 +61467,6 @@
                 "outbound": "direct",
                 "domain": [
                     "images-cn.ssl-images-amazon.com"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "process_name": [
-                    "aria2c"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "process_name": [
-                    "fdm"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "process_name": [
-                    "Folx"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "process_name": [
-                    "NetTransport"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "process_name": [
-                    "Thunder"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "process_name": [
-                    "Transmission"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "process_name": [
-                    "uTorrent"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "process_name": [
-                    "WebTorrent"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "process_name": [
-                    "WebTorrent Helper"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "process_name": [
-                    "DownloadService"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "process_name": [
-                    "Weiyun"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "domain_keyword": [
-                    "aria2"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "domain_keyword": [
-                    "xunlei"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "domain_keyword": [
-                    "yunpan"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "domain_keyword": [
-                    "Thunder"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "domain_keyword": [
-                    "XLLiveUD"
                 ]
             },
             {

@@ -1,15 +1,12 @@
 import os
 import json
+import re
 
 # Configuration
-# Path to the source high-precision ruleset (Markdown format)
 MD_PATH = "分流规则参考.md"
-# Directory containing X2Board JSON templates
 V2B_DIR = "v2b"
 
-# "Hardbone" Bypass List: 
-# Domains in this list are prioritized to bypass proxy and DNS hijacking logic.
-# They are injected at the highest priority in all supported client formats.
+# "Hardbone" Bypass List
 HARDBONES = [
     # Corporate/Intranet (Active Bypass)
     "corp.kuaishou.com", "kuaishou.com", "streamlake.com", "streamlake.ai",
@@ -26,345 +23,208 @@ HARDBONES = [
 ]
 
 def parse_md_rules(md_path):
+    if not os.path.exists(md_path): return []
     with open(md_path, 'r', encoding='utf-8') as f:
         md_lines = f.readlines()
-        
+    
     rules_start = -1
     for i, line in enumerate(md_lines):
         if line.strip() == 'rules:':
             rules_start = i
             break
-            
-    if rules_start == -1:
-        print("Cannot find 'rules:' in the MD file")
-        return []
-        
-    md_rules_raw = md_lines[rules_start+1:]
+    if rules_start == -1: return []
     
     parsed_rules = []
-    for line in md_rules_raw:
+    for line in md_lines[rules_start+1:]:
         line = line.strip()
-        if not line or not line.startswith('- '):
-            continue
-            
-        parts = line[2:].split(',')
-        rule_type = parts[0].strip()
+        if not line or not line.startswith('- '): continue
+        parts = [p.strip() for p in line[2:].split(',')]
+        if len(parts) < 2: continue
         
-        policy_idx = 1 if rule_type.upper() == 'MATCH' else 2
+        rule_type = parts[0].upper()
+        policy_raw = parts[1] if rule_type == 'MATCH' else parts[2] if len(parts) > 2 else 'PROXY'
         
-        if len(parts) > policy_idx:
-            raw_policy = parts[policy_idx].strip()
-            
-            if raw_policy == '🎯 全球直连':
-                policy = 'DIRECT'
-            elif raw_policy == '🛑 全球拦截':
-                policy = 'REJECT'
-            else:
-                policy = 'PROXY'
-                
-            payload = parts[1].strip() if policy_idx > 1 else ""
-            options = [p.strip() for p in parts[policy_idx+1:]] if len(parts) > policy_idx + 1 else []
-            
-            parsed_rules.append({
-                "type": rule_type,
-                "payload": payload,
-                "policy": policy,
-                "options": options
-            })
-            
+        if policy_raw == '🎯 全球直连': policy = 'DIRECT'
+        elif policy_raw == '🛑 全球拦截': policy = 'REJECT'
+        else: policy = 'PROXY'
+        
+        payload = parts[1] if rule_type != 'MATCH' else ""
+        options = parts[3:] if rule_type != 'MATCH' and len(parts) > 3 else []
+        if rule_type == 'MATCH' and len(parts) > 2: options = parts[2:]
+
+        parsed_rules.append({"type": rule_type, "payload": payload, "policy": policy, "options": options})
     return parsed_rules
 
 def process_clash(file_path, rules):
     with open(file_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()
-        
-    rules_start = -1
-    for i, line in enumerate(lines):
-        if line.strip() == 'rules:':
-            rules_start = i
-            break
-            
-    if rules_start == -1:
-        print(f"Skipping {os.path.basename(file_path)}: Cannot find 'rules:'")
-        return
-        
-    new_lines = []
-    # Copy until rules:
-    for l in lines[:rules_start+1]:
-        # Filter out previous hardbone injections so we don't duplicate
-        skip = False
-        for hb in HARDBONES:
-            if l.strip() == f'- "*.{hb}"' or l.strip() == f'- "{hb}"' or l.strip() == f'- "+.{hb}"':
-                skip = True
-            if l.strip() == f'"+.{hb}": "system"' or l.strip() == f'"{hb}": "system"' or l.strip() == f'"+.{hb}": "dhcp://system"':
-                skip = True
-        if skip: continue
-        
-        new_lines.append(l)
+
+    # 1. First, find important indices
+    rules_idx = -1
+    dns_idx = -1
+    ns_policy_idx = -1
+    fake_ip_filter_idx = -1
+    
+    for i, l in enumerate(lines):
+        s = l.strip()
+        if s == 'rules:': rules_idx = i
+        elif s == 'dns:': dns_idx = i
+        elif s == 'nameserver-policy:': ns_policy_idx = i
+        elif s == 'fake-ip-filter:': fake_ip_filter_idx = i
+
+    if rules_idx == -1: return
+
+    # 2. Scrub ALL previous hardbone-related lines to prevent 500 duplicates
+    # We remove any lines in nameserver-policy and fake-ip-filter that match our hardbones
+    # And we remove our injected rules at the top of rules:
+    scrubbed = []
+    skip_mode = False
+    
+    # Simple patterns to catch our injections
+    hb_patterns = [f'"{hb}"' for hb in HARDBONES] + [f'"+.{hb}"' for hb in HARDBONES] + [f'"*.{hb}"' for hb in HARDBONES]
+    
+    for i, l in enumerate(lines[:rules_idx+1]):
+        s = l.strip()
+        # Skip previously injected hardbone lines in maps/lists
+        is_hb_line = any(pat in s for pat in hb_patterns)
+        if is_hb_line and ("dhcp://system" in s or "- \"*." in s or "- \"+." in s or "- \"" in s):
+            continue
+        scrubbed.append(l)
+
+    # 3. Re-inject into DNS blocks
+    # Logic: If nameserver-policy exists, prepend hardbones. If not, create it under dns.
+    # We do a fresh injection.
+    final_lines = []
+    for l in scrubbed:
+        final_lines.append(l)
+        if l.strip() == 'nameserver-policy:':
+            for hb in HARDBONES:
+                final_lines.append(f'    "{hb}": "dhcp://system"\n')
+                final_lines.append(f'    "+.{hb}": "dhcp://system"\n')
         if l.strip() == 'fake-ip-filter:':
             for hb in HARDBONES:
-                new_lines.append(f"    - \"*.{hb}\"\n")
-                new_lines.append(f"    - \"{hb}\"\n")
-                
-    # Inject nameserver-policy for hardbones to dhcp://system
-    ns_idx = -1
-    for idx, l in enumerate(new_lines):
-        if l.strip() == 'nameserver-policy:':
-            ns_idx = idx
-            break
-    if ns_idx != -1:
-        for hb in HARDBONES:
-            new_lines.insert(ns_idx + 1, f"    \"+.{hb}\": \"dhcp://system\"\n")
-            new_lines.insert(ns_idx + 1, f"    \"{hb}\": \"dhcp://system\"\n")
-    else:
-        dns_idx = -1
-        for idx, l in enumerate(new_lines):
-            if l.strip() == 'dns:':
-                dns_idx = idx
-                break
-        if dns_idx != -1:
-            new_lines.insert(dns_idx + 1, "  nameserver-policy:\n")
-            for hb in HARDBONES:
-                new_lines.insert(dns_idx + 2, f"    \"+.{hb}\": \"dhcp://system\"\n")
-                new_lines.insert(dns_idx + 2, f"    \"{hb}\": \"dhcp://system\"\n")
+                final_lines.append(f'    - "+.{hb}"\n')
+                final_lines.append(f'    - "*.{hb}"\n')
+                final_lines.append(f'    - "{hb}"\n')
 
-    new_lines.append('\n  # 硬骨头内网放行区 (Highest Priority)\n')
+    # 4. Inject Rules
+    final_lines.append('\n  # 硬骨头内网放行区 (Highest Priority)\n')
     for hb in HARDBONES:
-        new_lines.append(f'  - DOMAIN-SUFFIX,{hb},DIRECT\n')
-        
-    new_lines.append('\n  # 局域网及核心内网放行区 (LAN Bypass)\n')
+        final_lines.append(f'  - DOMAIN-SUFFIX,{hb},DIRECT\n')
+    
+    final_lines.append('\n  # 局域网及核心内网放行区 (LAN Bypass)\n')
     for cidr in ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "100.64.0.0/10"]:
-        new_lines.append(f'  - IP-CIDR,{cidr},DIRECT\n')
-    for cidr6 in ["::1/128", "fc00::/7", "fe80::/10", "fd00::/8"]:
-        new_lines.append(f'  - IP-CIDR6,{cidr6},DIRECT\n')
-        
+        final_lines.append(f'  - IP-CIDR,{cidr},DIRECT\n')
+
     for r in rules:
         policy = '$app_name' if r['policy'] == 'PROXY' else r['policy']
-        if r['type'].upper() == 'MATCH':
-            new_lines.append(f"  - MATCH,{policy}\n")
+        if r['type'] == 'MATCH':
+            final_lines.append(f"  - MATCH,{policy}\n")
         else:
-            opt_str = f",{','.join(r['options'])}" if r['options'] else ""
-            new_lines.append(f"  - {r['type']},{r['payload']},{policy}{opt_str}\n")
-            
+            opts = f",{','.join(r['options'])}" if r['options'] else ""
+            final_lines.append(f"  - {r['type']},{r['payload']},{policy}{opts}\n")
+
     with open(file_path, 'w', encoding='utf-8') as f:
-        f.writelines(new_lines)
-    print(f"Successfully migrated Clash format: {os.path.basename(file_path)}")
+        f.writelines(final_lines)
+    print(f"Fixed & Migrated Clash: {os.path.basename(file_path)}")
 
 def process_surfboard(file_path, rules):
     with open(file_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()
-        
-    rules_start = -1
-    for i, line in enumerate(lines):
-        if line.strip() == '[Rule]':
-            rules_start = i
-            break
-            
-    if rules_start == -1:
-        print(f"Skipping {os.path.basename(file_path)}: Cannot find '[Rule]'")
-        return
-        
+    r_idx = -1
+    for i, l in enumerate(lines):
+        if l.strip() == '[Rule]': r_idx = i; break
+    if r_idx == -1: return
+
     new_lines = []
-    # Inject into skip-proxy
-    for l in lines[:rules_start+1]:
+    for l in lines[:r_idx+1]:
         if l.startswith('skip-proxy ='):
-            missing = [d for d in HARDBONES if d not in l]
+            curr = l.strip().split('=')[1].strip()
+            missing = [hb for hb in HARDBONES if hb not in curr]
             if missing:
-                append_list = ', '.join([f'*.{d}, {d}' for d in missing])
-                l = l.strip() + ', ' + append_list + '\n'
+                l = f'skip-proxy = {curr}, ' + ', '.join([f'*.{hb}, {hb}' for hb in missing]) + '\n'
         new_lines.append(l)
-    
-    new_lines.append('\n# 硬骨头内网放行区 (Highest Priority)\n')
-    for hb in HARDBONES:
-        new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
-        
-    new_lines.append('\n# 局域网及核心内网放行区 (LAN Bypass)\n')
-    for cidr in ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "100.64.0.0/10"]:
-        new_lines.append(f'IP-CIDR,{cidr},DIRECT,no-resolve\n')
-    for cidr6 in ["::1/128", "fc00::/7", "fe80::/10", "fd00::/8"]:
-        new_lines.append(f'IP-CIDR6,{cidr6},DIRECT,no-resolve\n')
-        
+
+    new_lines.append('\n# HARDBONES\n')
+    for hb in HARDBONES: new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
     for r in rules:
-        policy = '$app_name' if r['policy'] == 'PROXY' else r['policy']
-        if r['type'].upper() == 'MATCH':
-            new_lines.append(f"FINAL,{policy}\n")
-        else:
-            opt_str = f",{','.join(r['options'])}" if r['options'] else ""
-            new_lines.append(f"{r['type']},{r['payload']},{policy}{opt_str}\n")
-            
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.writelines(new_lines)
-    print(f"Successfully migrated Surfboard format: {os.path.basename(file_path)}")
+        p = '$app_name' if r['policy'] == 'PROXY' else r['policy']
+        if r['type'] == 'MATCH': new_lines.append(f"FINAL,{p}\n")
+        else: new_lines.append(f"{r['type']},{r['payload']},{p}\n")
+    
+    with open(file_path, 'w', encoding='utf-8') as f: f.writelines(new_lines)
 
 def process_shadowrocket(file_path, rules):
-    with open(file_path, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
-        
-    rules_start = -1
-    rules_end = -1
-    for i, line in enumerate(lines):
-        if line.strip() == '[Rule]':
-            rules_start = i
-        elif rules_start != -1 and line.strip().startswith('[') and line.strip().endswith(']'):
-            rules_end = i
-            break
-            
-    if rules_start == -1:
-        print(f"Skipping {os.path.basename(file_path)}: Cannot find '[Rule]'")
-        return
-        
-    if rules_end == -1:
-        rules_end = len(lines)
-        
+    with open(file_path, 'r', encoding='utf-8') as f: lines = f.readlines()
+    s_idx = -1
+    e_idx = -1
+    for i, l in enumerate(lines):
+        if l.strip() == '[Rule]': s_idx = i
+        elif s_idx != -1 and l.strip().startswith('['): e_idx = i; break
+    if s_idx == -1: return
+
     new_lines = []
-    for l in lines[:rules_start+1]:
+    for l in lines[:s_idx+1]:
         if l.startswith('skip-proxy ='):
-            missing = [d for d in HARDBONES if d not in l]
-            if missing:
-                append_list = ', '.join([f'*.{d}, {d}' for d in missing])
-                l = l.strip() + ', ' + append_list + '\n'
+            m = [hb for hb in HARDBONES if hb not in l]
+            if m: l = l.strip() + ', ' + ', '.join([f'*.{hb}, {hb}' for hb in m]) + '\n'
         new_lines.append(l)
     
-    new_lines.append('\n# 硬骨头内网放行区 (Highest Priority)\n')
-    for hb in HARDBONES:
-        new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
-        
-    new_lines.append('\n# 局域网及核心内网放行区 (LAN Bypass)\n')
-    for cidr in ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "100.64.0.0/10"]:
-        new_lines.append(f'IP-CIDR,{cidr},DIRECT,no-resolve\n')
-    for cidr6 in ["::1/128", "fc00::/7", "fe80::/10", "fd00::/8"]:
-        new_lines.append(f'IP-CIDR6,{cidr6},DIRECT,no-resolve\n')
-    
+    new_lines.append('\n# HARDBONES\n')
+    for hb in HARDBONES: new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
     for r in rules:
-        policy = 'PROXY' if r['policy'] == 'PROXY' else r['policy']
-        if r['type'].upper() == 'MATCH':
-            new_lines.append(f"FINAL,{policy}\n")
-        elif r['type'].upper() == 'IP-CIDR6':
-            opt_str = f",{','.join(r['options'])}" if r['options'] else ""
-            new_lines.append(f"{r['type']},{r['payload']},{policy}{opt_str}\n")
-        else:
-            opt_str = f",{','.join(r['options'])}" if r['options'] else ""
-            new_lines.append(f"{r['type']},{r['payload']},{policy}{opt_str}\n")
-            
-    new_lines.append("\n")
-    new_lines.extend(lines[rules_end:])
-            
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.writelines(new_lines)
-    print(f"Successfully migrated Shadowrocket format: {os.path.basename(file_path)}")
+        p = 'PROXY' if r['policy'] == 'PROXY' else r['policy']
+        if r['type'] == 'MATCH': new_lines.append(f"FINAL,{p}\n")
+        else: new_lines.append(f"{r['type']},{r['payload']},{p}\n")
+    
+    if e_idx != -1: new_lines.extend(lines[e_idx:])
+    with open(file_path, 'w', encoding='utf-8') as f: f.writelines(new_lines)
 
 def process_singbox(file_path, rules):
     with open(file_path, 'r', encoding='utf-8') as f:
-        try:
-            data = json.load(f)
-        except Exception as e:
-            print(f"Skipping {os.path.basename(file_path)}: Not a valid JSON ({e})")
-            return
-            
-    if 'route' not in data:
-        data['route'] = {}
-        
-    existing_rules = data['route'].get('rules', [])
-    dns_rules_orig = [x for x in existing_rules if x.get('protocol') == 'dns']
+        try: data = json.load(f)
+        except: return
     
-    new_rules = dns_rules_orig.copy()
+    data.setdefault('dns', {"servers": [], "rules": []})
+    if not any(s.get('tag') == 'local' for s in data['dns']['servers']):
+        data['dns']['servers'].append({"tag": "local", "address": "local", "detour": "direct"})
+    
+    # Clean and Re-inject DNS rules
+    d_rules = [r for r in data['dns']['rules'] if not (r.get('domain_suffix') == HARDBONES and r.get('server') == 'local')]
+    d_rules.insert(0, {"domain_suffix": HARDBONES, "server": "local"})
+    data['dns']['rules'] = d_rules
 
-    if 'dns' not in data:
-        data['dns'] = {"servers": [], "rules": []}
-    
-    has_local = any(s.get('tag') == 'local' for s in data['dns'].get('servers', []))
-    if not has_local:
-        data['dns'].setdefault('servers', []).append({"tag": "local", "address": "local", "detour": "direct"})
-        
-    # Remove existing hardbone rule if present to avoid duplication
-    dns_rules = [x for x in data['dns'].get('rules', []) if not (set(x.get('domain_suffix', [])) == set(HARDBONES) and x.get('server') == 'local')]
-    dns_rules.insert(0, {
-        "domain_suffix": HARDBONES,
-        "server": "local"
-    })
-    data['dns']['rules'] = dns_rules
-
-    new_rules.insert(0, {
-        "outbound": "direct",
-        "domain_suffix": HARDBONES
-    })
-    
-    new_rules.insert(1, {
-        "outbound": "direct",
-        "ip_cidr": ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "100.64.0.0/10", "::1/128", "fc00::/7", "fe80::/10", "fd00::/8"]
-    })
+    # Clean and Re-inject Route rules
+    r_rules = []
+    r_rules.append({"outbound": "direct", "domain_suffix": HARDBONES})
+    r_rules.append({"outbound": "direct", "ip_cidr": ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "::1/128", "fc00::/7"]})
     
     for r in rules:
-        outbound = "proxy"
-        if r['policy'] == 'DIRECT':
-            outbound = "direct"
-        elif r['policy'] == 'REJECT':
-            outbound = "block"
-            
-        if r['type'].upper() == 'MATCH':
-            data['route']['final'] = outbound
-            continue
-            
-        rule_obj = {"outbound": outbound}
-        rt = r['type'].upper()
-        
-        if rt == 'DOMAIN':
-            rule_obj['domain'] = [r['payload']]
-        elif rt == 'DOMAIN-SUFFIX':
-            rule_obj['domain_suffix'] = [r['payload']]
-        elif rt == 'DOMAIN-KEYWORD':
-            rule_obj['domain_keyword'] = [r['payload']]
-        elif rt == 'IP-CIDR' or rt == 'IP-CIDR6':
-            rule_obj['ip_cidr'] = [r['payload']]
-        elif rt == 'GEOIP':
-            rule_obj['geoip'] = [r['payload'].lower()]  
-        elif rt == 'PROCESS-NAME':
-            rule_obj['process_name'] = [r['payload']]
-        else:
-            continue 
-            
-        new_rules.append(rule_obj)
-        
-    data['route']['rules'] = new_rules
+        out = "proxy" if r['policy'] == 'PROXY' else "direct" if r['policy'] == 'DIRECT' else "block"
+        if r['type'] == 'MATCH': data['route']['final'] = out; continue
+        obj = {"outbound": out}
+        t = r['type'].upper()
+        if t == 'DOMAIN': obj['domain'] = [r['payload']]
+        elif t == 'DOMAIN-SUFFIX': obj['domain_suffix'] = [r['payload']]
+        elif t == 'IP-CIDR' or t == 'IP-CIDR6': obj['ip_cidr'] = [r['payload']]
+        elif t == 'GEOIP': obj['geoip'] = [r['payload'].lower()]
+        else: continue
+        r_rules.append(obj)
     
-    with open(file_path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
-        
-    print(f"Successfully migrated Sing-box format: {os.path.basename(file_path)}")
+    data['route']['rules'] = r_rules
+    with open(file_path, 'w', encoding='utf-8') as f: json.dump(data, f, indent=4, ensure_ascii=False)
 
 def main():
-    print("Parsing MD rules...")
-    parsed_rules = parse_md_rules(MD_PATH)
-    if not parsed_rules:
-        print("No rules parsed. Exiting.")
-        return
-        
-    print(f"Parsed {len(parsed_rules)} rules.")
-    
-    files = {
-        "Clash.json": "clash",
-        "Clash Meta.json": "clash",
-        "Stash.json": "clash",
-        "Surge.json": "clash",
-        "Surfboard.json": "surfboard",
-        "Shadowrocket.json": "shadowrocket",
-        "Sing-box.json": "singbox"
-    }
-    
-    for filename, format_type in files.items():
-        fp = os.path.join(V2B_DIR, filename)
-        if not os.path.exists(fp):
-            print(f"File not found: {filename}")
-            continue
-            
-        if format_type == "clash":
-            process_clash(fp, parsed_rules)
-        elif format_type == "surfboard":
-            process_surfboard(fp, parsed_rules)
-        elif format_type == "shadowrocket":
-            process_shadowrocket(fp, parsed_rules)
-        elif format_type == "singbox":
-            process_singbox(fp, parsed_rules)
+    parsed = parse_md_rules(MD_PATH)
+    if not parsed: return
+    formats = {"Clash.json": "clash", "Clash Meta.json": "clash", "Stash.json": "clash", "Surge.json": "clash",
+               "Surfboard.json": "surfboard", "Shadowrocket.json": "shadowrocket", "Sing-box.json": "singbox"}
+    for fn, fmt in formats.items():
+        fp = os.path.join(V2B_DIR, fn)
+        if not os.path.exists(fp): continue
+        if fmt == "clash": process_clash(fp, parsed)
+        elif fmt == "surfboard": process_surfboard(fp, parsed)
+        elif fmt == "shadowrocket": process_shadowrocket(fp, parsed)
+        elif fmt == "singbox": process_singbox(fp, parsed)
 
-if __name__ == '__main__':
-    main()
+if __name__ == '__main__': main()
