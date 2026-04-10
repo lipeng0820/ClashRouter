@@ -103,7 +103,8 @@ def process_clash(file_path, rules):
         new_lines.append(l)
         if l.strip() == 'fake-ip-filter:':
             for hb in HARDBONES:
-                new_lines.append(f"    - \"+.{hb}\"\n")
+                new_lines.append(f"    - \"*.{hb}\"\n")
+                new_lines.append(f"    - \"{hb}\"\n")
                 
     # Inject nameserver-policy for hardbones to dhcp://system
     ns_idx = -1
