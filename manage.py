@@ -37,29 +37,29 @@ def add_hardbone(domain):
     print(f"Successfully added {domain} to HARDBONES.")
 
 def main():
-    print("=== ClashRouter Manager ===")
-    print("1. Add new Hardbone domain")
-    print("2. Run Migration (Update Templates)")
-    print("3. Sync to GitHub (Commit & Push)")
-    print("4. Exit")
+    print("=== ClashRouter 规则管理器 ===")
+    print("1. 添加新的“硬骨头”域名 (直连白名单)")
+    print("2. 执行同步 (更新所有分流配置文件)")
+    print("3. 同步到 GitHub (自动提交并推送)")
+    print("4. 退出")
     
-    choice = input("Select an option (1-4): ")
+    choice = input("请选择操作 (1-4): ")
 
     if choice == "1":
-        domain = input("Enter the domain to bypass (e.g., example.com): ").strip()
+        domain = input("请输入要放行的域名 (例如: example.com): ").strip()
         if domain:
             add_hardbone(domain)
     elif choice == "2":
-        print("Running migrate_rules.py...")
+        print("正在运行 migrate_rules.py 更新模版...")
         run_command("python3 migrate_rules.py")
     elif choice == "3":
-        msg = input("Enter commit message (default: Update rules): ").strip() or "Update rules"
+        msg = input("请输入提交信息 (直接回车默认为: 更新分流规则): ").strip() or "更新分流规则"
         if run_command("git add .") and run_command(f'git commit -m "{msg}"') and run_command("git push"):
-            print("Successfully synced to GitHub.")
+            print("🎉 已成功同步到 GitHub！")
     elif choice == "4":
         sys.exit()
     else:
-        print("Invalid choice.")
+        print("无效选择，请重试。")
 
 if __name__ == "__main__":
     while True:
