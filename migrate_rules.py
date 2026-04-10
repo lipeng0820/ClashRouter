@@ -1,15 +1,25 @@
 import os
 import json
 
-md_path = "/Users/pengli/Desktop/Clash 分流升级/分流规则参考.md"
-v2b_dir = "/Users/pengli/Desktop/Clash 分流升级/v2b"
+# Configuration
+# Path to the source high-precision ruleset (Markdown format)
+MD_PATH = "分流规则参考.md"
+# Directory containing X2Board JSON templates
+V2B_DIR = "v2b"
 
+# "Hardbone" Bypass List: 
+# Domains in this list are prioritized to bypass proxy and DNS hijacking logic.
+# They are injected at the highest priority in all supported client formats.
 HARDBONES = [
+    # Corporate/Intranet (Anonymized in README, but active here)
     "corp.kuaishou.com", "kuaishou.com", "streamlake.com", "streamlake.ai",
+    # Remote Desktop Tools
     "todesk.com", "oray.com", "oray.cn", "sunlogin.net", "sunlogin.com",
+    # Main banking and financial services
     "cmbchina.com", "cmbchina.cn", "pingan.com", "pingan.com.cn", "spdb.com.cn",
     "alipayhk.com", "alipay.hk", "hsbc.com.hk", "hsbc.com", "bochk.com", "za.group", "antbank.hk",
     "futunn.com", "futu5.com", "futuhk.com",
+    # mPaaS / Alibaba ecosystem telemery used by many HK banking apps
     "alipay.com", "alipayobjects.com", "antgroup.com", "amap.com", "taobao.com", "alibaba.com"
 ]
 
@@ -324,7 +334,7 @@ def process_singbox(file_path, rules):
 
 def main():
     print("Parsing MD rules...")
-    parsed_rules = parse_md_rules(md_path)
+    parsed_rules = parse_md_rules(MD_PATH)
     if not parsed_rules:
         print("No rules parsed. Exiting.")
         return
@@ -342,7 +352,7 @@ def main():
     }
     
     for filename, format_type in files.items():
-        fp = os.path.join(v2b_dir, filename)
+        fp = os.path.join(V2B_DIR, filename)
         if not os.path.exists(fp):
             print(f"File not found: {filename}")
             continue
