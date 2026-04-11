@@ -96,6 +96,8 @@ dns:
     "+.tmall.com": "dhcp://system"
     "mmstat.com": "dhcp://system"
     "+.mmstat.com": "dhcp://system"
+    "aigei.com": "dhcp://system"
+    "+.aigei.com": "dhcp://system"
   enable: true
   ipv6: false
   default-nameserver:
@@ -242,6 +244,9 @@ dns:
     - "+.mmstat.com"
     - "*.mmstat.com"
     - "mmstat.com"
+    - "+.aigei.com"
+    - "*.aigei.com"
+    - "aigei.com"
     - "*.lan"
     - "*.local"
     - "*.localhost"
@@ -254,6 +259,9 @@ proxy-groups:
   - { name: "故障转移", type: fallback, proxies: [], url: "http://www.gstatic.com/generate_204", interval: 300 }
 
 rules:
+
+  # 兼容性直连域名 (Avoid CN .com Misroute)
+  - DOMAIN-SUFFIX,aigei.com,DIRECT
 
   # 硬骨头内网放行区 (Highest Priority)
   - DOMAIN-SUFFIX,corp.kuaishou.com,DIRECT
@@ -10224,7 +10232,6 @@ rules:
   - IP-CIDR6,2001:b28:f23d::/48,$app_name,no-resolve
   - IP-CIDR6,2001:b28:f23f::/48,$app_name,no-resolve
   - IP-CIDR6,2001:b28:f23c::/48,$app_name,no-resolve
-  - MATCH,$app_name
   - PROCESS-NAME,fdm,DIRECT
   - PROCESS-NAME,Folx,DIRECT
   - PROCESS-NAME,aria2c,DIRECT
@@ -10236,3 +10243,4 @@ rules:
   - PROCESS-NAME,Transmission,DIRECT
   - PROCESS-NAME,DownloadService,DIRECT
   - PROCESS-NAME,WebTorrent Helper,DIRECT
+  - MATCH,$app_name

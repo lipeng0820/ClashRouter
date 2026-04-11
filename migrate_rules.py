@@ -5,6 +5,22 @@ import re
 # Configuration
 MD_PATH = "分流规则参考.md"
 V2B_DIR = "v2b"
+CUSTOM_DIRECT_DOMAINS_PATH = "custom_direct_domains.txt"
+
+def load_custom_direct_domains(file_path):
+    if not os.path.exists(file_path):
+        return []
+    domains = []
+    with open(file_path, "r", encoding="utf-8") as f:
+        for line in f:
+            s = line.strip().lower()
+            if not s or s.startswith("#"):
+                continue
+            s = s.lstrip(".")
+            if re.fullmatch(r"[a-z0-9.-]+", s):
+                domains.append(s)
+    # Stable order + deduplication
+    return sorted(set(domains))
 
 # "Hardbone" Bypass List (Injected at the very top of rules and handled as High Priority)
 HARDBONES = [
@@ -18,11 +34,17 @@ HARDBONES = [
     "tmall.com", "mmstat.com"
 ]
 
+# Compatibility direct list for domestic .com sites that may be misrouted under fake-ip/TUN.
+DEFAULT_FORCE_DIRECT_DOMAINS = [
+    "aigei.com",
+]
+FORCE_DIRECT_DOMAINS = sorted(set(DEFAULT_FORCE_DIRECT_DOMAINS + load_custom_direct_domains(CUSTOM_DIRECT_DOMAINS_PATH)))
+
 # Kernel-level Bypass Domains (Injected into skip-proxy/fake-ip-filter to bypass VPN tunnel entirely)
 BYPASS_DOMAINS = [
     "apple.com", "icloud.com", "itunes.apple.com", "mzstatic.com", 
     "aaplimg.com", "cdn-apple.com", "apple-dns.net", "ls.apple.com"
-] + HARDBONES
+] + HARDBONES + FORCE_DIRECT_DOMAINS
 
 # Smart Overrides: Force specific policies regardless of source file conflicts
 SMART_OVERRIDES = {
@@ -50,6 +72,8 @@ SMART_OVERRIDES = {
     "bilibili.com": "DIRECT",
     "hdslb.com": "DIRECT"
 }
+for _d in FORCE_DIRECT_DOMAINS:
+    SMART_OVERRIDES[_d] = "DIRECT"
 
 # Shadowrocket: US priority routing chain for Capital One / PayPal / Claude iOS
 SR_US_PRIMARY_POLICY = "US 美丽合众"
@@ -175,18 +199,26 @@ def process_clash(file_path, rules):
                 final_lines.append(f'    - "*.{d}"\n')
                 final_lines.append(f'    - "{d}"\n')
 
+    if FORCE_DIRECT_DOMAINS:
+        final_lines.append('\n  # 兼容性直连域名 (Avoid CN .com Misroute)\n')
+        for d in FORCE_DIRECT_DOMAINS:
+            final_lines.append(f'  - DOMAIN-SUFFIX,{d},DIRECT\n')
+
     final_lines.append('\n  # 硬骨头内网放行区 (Highest Priority)\n')
     for hb in HARDBONES: final_lines.append(f'  - DOMAIN-SUFFIX,{hb},DIRECT\n')
     final_lines.append('\n  # 局域网及核心内网放行区 (LAN Bypass)\n')
     for cidr in ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "100.64.0.0/10"]:
         final_lines.append(f'  - IP-CIDR,{cidr},DIRECT\n')
 
+    match_policy = '$app_name'
     for r in rules:
         policy = '$app_name' if r['policy'] == 'PROXY' else r['policy']
-        if r['type'] == 'MATCH': final_lines.append(f"  - MATCH,{policy}\n")
-        else:
-            opts = f",{','.join(r['options'])}" if r['options'] else ""
-            final_lines.append(f"  - {r['type']},{r['payload']},{policy}{opts}\n")
+        if r['type'] == 'MATCH':
+            match_policy = policy
+            continue
+        opts = f",{','.join(r['options'])}" if r['options'] else ""
+        final_lines.append(f"  - {r['type']},{r['payload']},{policy}{opts}\n")
+    final_lines.append(f"  - MATCH,{match_policy}\n")
 
     with open(file_path, 'w', encoding='utf-8') as f: f.writelines(final_lines)
     print(f"Migrated & Optimized Clash: {os.path.basename(file_path)}")
@@ -206,12 +238,21 @@ def process_surfboard(file_path, rules):
                 l = f'skip-proxy = {curr}, ' + ', '.join([f'*.{d}, {d}' for d in missing]) + '\n'
         new_lines.append(l)
 
+    if FORCE_DIRECT_DOMAINS:
+        new_lines.append('\n# Compatibility Direct Domains\n')
+        for d in FORCE_DIRECT_DOMAINS:
+            new_lines.append(f'DOMAIN-SUFFIX,{d},DIRECT\n')
+
     new_lines.append('\n# HARDBONES\n')
     for hb in HARDBONES: new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
+    final_policy = '$app_name'
     for r in rules:
         p = '$app_name' if r['policy'] == 'PROXY' else r['policy']
-        if r['type'] == 'MATCH': new_lines.append(f"FINAL,{p}\n")
-        else: new_lines.append(f"{r['type']},{r['payload']},{p}\n")
+        if r['type'] == 'MATCH':
+            final_policy = p
+            continue
+        new_lines.append(f"{r['type']},{r['payload']},{p}\n")
+    new_lines.append(f"FINAL,{final_policy}\n")
     with open(file_path, 'w', encoding='utf-8') as f: f.writelines(new_lines)
 
 def section_bounds(lines, section_name):
@@ -289,12 +330,21 @@ def process_shadowrocket(file_path, rules):
     for rtype, payload in SR_US_PRIORITY_RULES:
         new_lines.append(f'{rtype},{payload},{SR_US_PRIORITY_POLICY}\n')
 
+    if FORCE_DIRECT_DOMAINS:
+        new_lines.append('\n# Compatibility Direct Domains\n')
+        for d in FORCE_DIRECT_DOMAINS:
+            new_lines.append(f'DOMAIN-SUFFIX,{d},DIRECT\n')
+
     new_lines.append('\n# HARDBONES\n')
     for hb in HARDBONES: new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
+    final_policy = 'PROXY'
     for r in rules:
         p = 'PROXY' if r['policy'] == 'PROXY' else r['policy']
-        if r['type'] == 'MATCH': new_lines.append(f"FINAL,{p}\n")
-        else: new_lines.append(f"{r['type']},{r['payload']},{p}\n")
+        if r['type'] == 'MATCH':
+            final_policy = p
+            continue
+        new_lines.append(f"{r['type']},{r['payload']},{p}\n")
+    new_lines.append(f"FINAL,{final_policy}\n")
     if e_idx != -1: new_lines.extend(lines[e_idx:])
     with open(file_path, 'w', encoding='utf-8') as f: f.writelines(new_lines)
     print(f"Migrated & Optimized Shadowrocket: {os.path.basename(file_path)}")
@@ -306,8 +356,9 @@ def process_singbox(file_path, rules):
     data.setdefault('dns', {"servers": [], "rules": []})
     if not any(s.get('tag') == 'local' for s in data['dns']['servers']):
         data['dns']['servers'].append({"tag": "local", "address": "local", "detour": "direct"})
-    data['dns']['rules'] = [{"domain_suffix": HARDBONES, "server": "local"}] + [r for r in data['dns']['rules'] if r.get('server') != 'local']
-    r_rules = [{"outbound": "direct", "domain_suffix": HARDBONES}, {"outbound": "direct", "ip_cidr": ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "::1/128"]}]
+    local_suffix = sorted(set(HARDBONES + FORCE_DIRECT_DOMAINS))
+    data['dns']['rules'] = [{"domain_suffix": local_suffix, "server": "local"}] + [r for r in data['dns']['rules'] if r.get('server') != 'local']
+    r_rules = [{"outbound": "direct", "domain_suffix": local_suffix}, {"outbound": "direct", "ip_cidr": ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "::1/128"]}]
     for r in rules:
         out = "proxy" if r['policy'] == 'PROXY' else "direct" if r['policy'] == 'DIRECT' else "block"
         if r['type'] == 'MATCH': data['route']['final'] = out; continue

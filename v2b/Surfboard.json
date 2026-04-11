@@ -1,7 +1,7 @@
 # Surfboard
 [General]
 dns-server = 223.5.5.5, 119.29.29.29, 114.114.114.114
-skip-proxy = 127.0.0.1, 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 100.64.0.0/10, localhost, *.local, *.corp.kuaishou.com, corp.kuaishou.com, *.kuaishou.com, kuaishou.com, *.streamlake.com, streamlake.com, *.streamlake.ai, streamlake.ai, *.todesk.com, todesk.com, *.oray.com, oray.com, *.oray.cn, oray.cn, *.sunlogin.net, sunlogin.net, *.sunlogin.com, sunlogin.com, *.cmbchina.com, cmbchina.com, *.cmbchina.cn, cmbchina.cn, *.pingan.com, pingan.com, *.pingan.com.cn, pingan.com.cn, *.spdb.com.cn, spdb.com.cn, *.alipayhk.com, alipayhk.com, *.alipay.hk, alipay.hk, *.hsbc.com.hk, hsbc.com.hk, *.hsbc.com, hsbc.com, *.bochk.com, bochk.com, *.za.group, za.group, *.antbank.hk, antbank.hk, *.futunn.com, futunn.com, *.futu5.com, futu5.com, *.futuhk.com, futuhk.com, *.alipay.com, alipay.com, *.alipayobjects.com, alipayobjects.com, *.antgroup.com, antgroup.com, *.amap.com, amap.com, *.taobao.com, taobao.com, *.alibaba.com, alibaba.com, *.alipay.cn, alipay.cn, *.alicdn.com, alicdn.com, *.aliyun.com, aliyun.com, *.aliyuncdn.com, aliyuncdn.com, *.tmall.com, tmall.com, *.mmstat.com, mmstat.com, *.apple.com, apple.com, *.icloud.com, icloud.com, *.itunes.apple.com, itunes.apple.com, *.mzstatic.com, mzstatic.com, *.aaplimg.com, aaplimg.com, *.cdn-apple.com, cdn-apple.com, *.apple-dns.net, apple-dns.net, *.ls.apple.com, ls.apple.com
+skip-proxy = 127.0.0.1, 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 100.64.0.0/10, localhost, *.local, *.corp.kuaishou.com, corp.kuaishou.com, *.kuaishou.com, kuaishou.com, *.streamlake.com, streamlake.com, *.streamlake.ai, streamlake.ai, *.todesk.com, todesk.com, *.oray.com, oray.com, *.oray.cn, oray.cn, *.sunlogin.net, sunlogin.net, *.sunlogin.com, sunlogin.com, *.cmbchina.com, cmbchina.com, *.cmbchina.cn, cmbchina.cn, *.pingan.com, pingan.com, *.pingan.com.cn, pingan.com.cn, *.spdb.com.cn, spdb.com.cn, *.alipayhk.com, alipayhk.com, *.alipay.hk, alipay.hk, *.hsbc.com.hk, hsbc.com.hk, *.hsbc.com, hsbc.com, *.bochk.com, bochk.com, *.za.group, za.group, *.antbank.hk, antbank.hk, *.futunn.com, futunn.com, *.futu5.com, futu5.com, *.futuhk.com, futuhk.com, *.alipay.com, alipay.com, *.alipayobjects.com, alipayobjects.com, *.antgroup.com, antgroup.com, *.amap.com, amap.com, *.taobao.com, taobao.com, *.alibaba.com, alibaba.com, *.alipay.cn, alipay.cn, *.alicdn.com, alicdn.com, *.aliyun.com, aliyun.com, *.aliyuncdn.com, aliyuncdn.com, *.tmall.com, tmall.com, *.mmstat.com, mmstat.com, *.apple.com, apple.com, *.icloud.com, icloud.com, *.itunes.apple.com, itunes.apple.com, *.mzstatic.com, mzstatic.com, *.aaplimg.com, aaplimg.com, *.cdn-apple.com, cdn-apple.com, *.apple-dns.net, apple-dns.net, *.ls.apple.com, ls.apple.com, *.aigei.com, aigei.com
 test-timeout = 5
 internet-test-url = http://www.google.com/generate_204
 proxy-test-url = http://www.google.com/generate_204
@@ -16,6 +16,9 @@ $app_name = select, 自动选择, 故障转移, DIRECT
 故障转移 = fallback, proxies-read-from-subscriber, url=http://www.gstatic.com/generate_204, interval=300
 
 [Rule]
+
+# Compatibility Direct Domains
+DOMAIN-SUFFIX,aigei.com,DIRECT
 
 # HARDBONES
 DOMAIN-SUFFIX,corp.kuaishou.com,DIRECT
@@ -9979,7 +9982,6 @@ IP-CIDR6,2001:67c:4e8::/48,$app_name
 IP-CIDR6,2001:b28:f23d::/48,$app_name
 IP-CIDR6,2001:b28:f23f::/48,$app_name
 IP-CIDR6,2001:b28:f23c::/48,$app_name
-FINAL,$app_name
 PROCESS-NAME,fdm,DIRECT
 PROCESS-NAME,Folx,DIRECT
 PROCESS-NAME,aria2c,DIRECT
@@ -9991,3 +9993,4 @@ PROCESS-NAME,NetTransport,DIRECT
 PROCESS-NAME,Transmission,DIRECT
 PROCESS-NAME,DownloadService,DIRECT
 PROCESS-NAME,WebTorrent Helper,DIRECT
+FINAL,$app_name

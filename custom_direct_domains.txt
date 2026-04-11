@@ -1,0 +1,6 @@
+# One domain suffix per line.
+# Purpose: force DIRECT routing for domestic .com sites that may be misrouted when fake-ip/TUN is enabled.
+# Example:
+#   example.com
+
+aigei.com
