@@ -315,6 +315,15 @@ rules:
 
   # 强制代理域名 (Blocked/Unstable on DIRECT)
   - DOMAIN-SUFFIX,900820.xyz,$app_name
+  - DOMAIN-SUFFIX,alt1-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt2-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt3-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt4-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt5-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt6-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt7-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt8-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,mtalk.google.com,$app_name
 
   # 兼容性直连域名 (Avoid CN .com Misroute)
   - DOMAIN-SUFFIX,aigei.com,DIRECT
@@ -373,7 +382,7 @@ rules:
   - DOMAIN,cc.tvbs.com.tw,$app_name
   - DOMAIN,sycm.mmstat.com,DIRECT
   - DOMAIN,dl.l.google.com,DIRECT
-  - DOMAIN,mtalk.google.com,DIRECT
+  - DOMAIN,mtalk.google.com,$app_name
   - DOMAIN,fonts.gstatic.com,DIRECT
   - DOMAIN,tv.applemusic.com,$app_name
   - DOMAIN,atv-ps.amazon.com,$app_name
@@ -402,14 +411,14 @@ rules:
   - DOMAIN,cacerts.digicert.com,$app_name
   - DOMAIN,speedtest.macpaw.com,DIRECT
   - DOMAIN,update.googleapis.com,DIRECT
-  - DOMAIN,alt1-mtalk.google.com,DIRECT
-  - DOMAIN,alt2-mtalk.google.com,DIRECT
-  - DOMAIN,alt3-mtalk.google.com,DIRECT
-  - DOMAIN,alt4-mtalk.google.com,DIRECT
-  - DOMAIN,alt5-mtalk.google.com,DIRECT
-  - DOMAIN,alt6-mtalk.google.com,DIRECT
-  - DOMAIN,alt7-mtalk.google.com,DIRECT
-  - DOMAIN,alt8-mtalk.google.com,DIRECT
+  - DOMAIN,alt1-mtalk.google.com,$app_name
+  - DOMAIN,alt2-mtalk.google.com,$app_name
+  - DOMAIN,alt3-mtalk.google.com,$app_name
+  - DOMAIN,alt4-mtalk.google.com,$app_name
+  - DOMAIN,alt5-mtalk.google.com,$app_name
+  - DOMAIN,alt6-mtalk.google.com,$app_name
+  - DOMAIN,alt7-mtalk.google.com,$app_name
+  - DOMAIN,alt8-mtalk.google.com,$app_name
   - DOMAIN,outlook.office365.com,DIRECT
   - DOMAIN,apm-misaka.biliapi.net,$app_name
   - DOMAIN,players.brightcove.net,$app_name
