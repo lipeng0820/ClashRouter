@@ -127,7 +127,6 @@ DOMAIN,assets1.xboxlive.com,PROXY
 DOMAIN,assets2.xboxlive.com,PROXY
 DOMAIN,cacerts.digicert.com,PROXY
 DOMAIN,speedtest.macpaw.com,DIRECT
-DOMAIN,update.googleapis.com,DIRECT
 DOMAIN,alt1-mtalk.google.com,PROXY
 DOMAIN,alt2-mtalk.google.com,PROXY
 DOMAIN,alt3-mtalk.google.com,PROXY
@@ -136,6 +135,7 @@ DOMAIN,alt5-mtalk.google.com,PROXY
 DOMAIN,alt6-mtalk.google.com,PROXY
 DOMAIN,alt7-mtalk.google.com,PROXY
 DOMAIN,alt8-mtalk.google.com,PROXY
+DOMAIN,update.googleapis.com,DIRECT
 DOMAIN,outlook.office365.com,DIRECT
 DOMAIN,apm-misaka.biliapi.net,PROXY
 DOMAIN,players.brightcove.net,PROXY
@@ -1490,6 +1490,7 @@ DOMAIN-SUFFIX,xiaoka.tv,DIRECT
 DOMAIN-SUFFIX,xmcdn.com,DIRECT
 DOMAIN-SUFFIX,zhihu.com,DIRECT
 DOMAIN-SUFFIX,zhimg.com,DIRECT
+DOMAIN-SUFFIX,900820.xyz,PROXY
 DOMAIN-SUFFIX,openai.com,PROXY
 DOMAIN-SUFFIX,akadns.net,PROXY
 DOMAIN-SUFFIX,msauth.net,PROXY
