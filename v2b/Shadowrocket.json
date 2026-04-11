@@ -37,6 +37,7 @@ DOMAIN-SUFFIX,anthropic.ai,US-金融与Claude优先
 PROCESS-NAME,Claude,US-金融与Claude优先
 
 # Forced Proxy Domains
+DOMAIN,x.900820.xyz,PROXY
 DOMAIN-SUFFIX,900820.xyz,PROXY
 DOMAIN-SUFFIX,alt1-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt2-mtalk.google.com,PROXY

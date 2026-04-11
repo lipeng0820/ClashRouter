@@ -87,6 +87,12 @@
         "rules": [
             {
                 "outbound": "proxy",
+                "domain": [
+                    "x.900820.xyz"
+                ]
+            },
+            {
+                "outbound": "proxy",
                 "domain_suffix": [
                     "900820.xyz",
                     "alt1-mtalk.google.com",

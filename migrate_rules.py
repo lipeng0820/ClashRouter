@@ -61,6 +61,11 @@ DEFAULT_FORCE_PROXY_DOMAINS = [
 ]
 FORCE_PROXY_DOMAINS = sorted(set(DEFAULT_FORCE_PROXY_DOMAINS + load_custom_proxy_domains(CUSTOM_PROXY_DOMAINS_PATH)))
 
+# Exact-host overrides (higher precision than suffix rules).
+FORCE_PROXY_EXACT_DOMAINS = [
+    "x.900820.xyz",
+]
+
 # If Cloudflare/Google DoH is not reachable locally, Google-family DNS resolution may timeout.
 # Rewrite these to a reachable domestic DoH for stability.
 DNS_POLICY_REWRITE = {
@@ -106,6 +111,8 @@ SMART_OVERRIDES = {
 for _d in FORCE_DIRECT_DOMAINS:
     SMART_OVERRIDES[_d] = "DIRECT"
 for _d in FORCE_PROXY_DOMAINS:
+    SMART_OVERRIDES[_d] = "PROXY"
+for _d in FORCE_PROXY_EXACT_DOMAINS:
     SMART_OVERRIDES[_d] = "PROXY"
 
 # Shadowrocket: US priority routing chain for Capital One / PayPal / Claude iOS
@@ -243,8 +250,10 @@ def process_clash(file_path, rules):
                 final_lines.append(f'    - "*.{d}"\n')
                 final_lines.append(f'    - "{d}"\n')
 
-    if FORCE_PROXY_DOMAINS:
+    if FORCE_PROXY_EXACT_DOMAINS or FORCE_PROXY_DOMAINS:
         final_lines.append('\n  # 强制代理域名 (Blocked/Unstable on DIRECT)\n')
+        for d in FORCE_PROXY_EXACT_DOMAINS:
+            final_lines.append(f'  - DOMAIN,{d},$app_name\n')
         for d in FORCE_PROXY_DOMAINS:
             final_lines.append(f'  - DOMAIN-SUFFIX,{d},$app_name\n')
 
@@ -287,8 +296,10 @@ def process_surfboard(file_path, rules):
                 l = f'skip-proxy = {curr}, ' + ', '.join([f'*.{d}, {d}' for d in missing]) + '\n'
         new_lines.append(l)
 
-    if FORCE_PROXY_DOMAINS:
+    if FORCE_PROXY_EXACT_DOMAINS or FORCE_PROXY_DOMAINS:
         new_lines.append('\n# Forced Proxy Domains\n')
+        for d in FORCE_PROXY_EXACT_DOMAINS:
+            new_lines.append(f'DOMAIN,{d},$app_name\n')
         for d in FORCE_PROXY_DOMAINS:
             new_lines.append(f'DOMAIN-SUFFIX,{d},$app_name\n')
 
@@ -384,8 +395,10 @@ def process_shadowrocket(file_path, rules):
     for rtype, payload in SR_US_PRIORITY_RULES:
         new_lines.append(f'{rtype},{payload},{SR_US_PRIORITY_POLICY}\n')
 
-    if FORCE_PROXY_DOMAINS:
+    if FORCE_PROXY_EXACT_DOMAINS or FORCE_PROXY_DOMAINS:
         new_lines.append('\n# Forced Proxy Domains\n')
+        for d in FORCE_PROXY_EXACT_DOMAINS:
+            new_lines.append(f'DOMAIN,{d},PROXY\n')
         for d in FORCE_PROXY_DOMAINS:
             new_lines.append(f'DOMAIN-SUFFIX,{d},PROXY\n')
 
@@ -418,7 +431,9 @@ def process_singbox(file_path, rules):
     local_suffix = sorted(set(HARDBONES + FORCE_DIRECT_DOMAINS))
     data['dns']['rules'] = [{"domain_suffix": local_suffix, "server": "local"}] + [r for r in data['dns']['rules'] if r.get('server') != 'local']
     r_rules = []
-    if FORCE_PROXY_DOMAINS:
+    if FORCE_PROXY_EXACT_DOMAINS or FORCE_PROXY_DOMAINS:
+        if FORCE_PROXY_EXACT_DOMAINS:
+            r_rules.append({"outbound": "proxy", "domain": FORCE_PROXY_EXACT_DOMAINS})
         r_rules.append({"outbound": "proxy", "domain_suffix": FORCE_PROXY_DOMAINS})
     r_rules.extend([{"outbound": "direct", "domain_suffix": local_suffix}, {"outbound": "direct", "ip_cidr": ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "::1/128"]}])
     for r in rules:

@@ -314,6 +314,7 @@ proxy-groups:
 rules:
 
   # 强制代理域名 (Blocked/Unstable on DIRECT)
+  - DOMAIN,x.900820.xyz,$app_name
   - DOMAIN-SUFFIX,900820.xyz,$app_name
   - DOMAIN-SUFFIX,alt1-mtalk.google.com,$app_name
   - DOMAIN-SUFFIX,alt2-mtalk.google.com,$app_name
