@@ -55,27 +55,11 @@ DEFAULT_FORCE_DIRECT_DOMAINS = [
 ]
 FORCE_DIRECT_DOMAINS = sorted(set(DEFAULT_FORCE_DIRECT_DOMAINS + load_custom_direct_domains(CUSTOM_DIRECT_DOMAINS_PATH)))
 
-# Reliability proxy list for domains frequently blocked on DIRECT in CN networks.
-FORCE_PROXY_DOMAINS = [
-    "fonts.gstatic.com",
-    "fonts.googleapis.com",
-    "clientservices.googleapis.com",
-    "update.googleapis.com",
-    "translate.googleapis.com",
-    "dl.google.com",
-    "dl.l.google.com",
-    "mtalk.google.com",
-    "alt1-mtalk.google.com",
-    "alt2-mtalk.google.com",
-    "alt3-mtalk.google.com",
-    "alt4-mtalk.google.com",
-    "alt5-mtalk.google.com",
-    "alt6-mtalk.google.com",
-    "alt7-mtalk.google.com",
-    "alt8-mtalk.google.com",
+# Reliability proxy list (speed-priority default keeps this minimal).
+DEFAULT_FORCE_PROXY_DOMAINS = [
     "900820.xyz",
 ]
-FORCE_PROXY_DOMAINS = sorted(set(FORCE_PROXY_DOMAINS + load_custom_proxy_domains(CUSTOM_PROXY_DOMAINS_PATH)))
+FORCE_PROXY_DOMAINS = sorted(set(DEFAULT_FORCE_PROXY_DOMAINS + load_custom_proxy_domains(CUSTOM_PROXY_DOMAINS_PATH)))
 
 # If Cloudflare/Google DoH is not reachable locally, Google-family DNS resolution may timeout.
 # Rewrite these to a reachable domestic DoH for stability.
