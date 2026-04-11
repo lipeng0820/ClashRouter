@@ -6,7 +6,7 @@ import re
 MD_PATH = "分流规则参考.md"
 V2B_DIR = "v2b"
 
-# "Hardbone" Bypass List (Injected at the very top)
+# "Hardbone" Bypass List (Injected at the very top of rules and handled as High Priority)
 HARDBONES = [
     "corp.kuaishou.com", "kuaishou.com", "streamlake.com", "streamlake.ai",
     "todesk.com", "oray.com", "oray.cn", "sunlogin.net", "sunlogin.com",
@@ -17,6 +17,12 @@ HARDBONES = [
     "taobao.com", "alibaba.com", "alicdn.com", "aliyun.com", "aliyuncdn.com", 
     "tmall.com", "mmstat.com"
 ]
+
+# Kernel-level Bypass Domains (Injected into skip-proxy/fake-ip-filter to bypass VPN tunnel entirely)
+BYPASS_DOMAINS = [
+    "apple.com", "icloud.com", "itunes.apple.com", "mzstatic.com", 
+    "aaplimg.com", "cdn-apple.com", "apple-dns.net", "ls.apple.com"
+] + HARDBONES
 
 # Smart Overrides: Force specific policies regardless of source file conflicts
 SMART_OVERRIDES = {
@@ -116,36 +122,39 @@ def process_clash(file_path, rules):
     with open(file_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()
     rules_idx = -1
-    dns_idx = -1
-    ns_policy_idx = -1
-    fake_ip_filter_idx = -1
     for i, l in enumerate(lines):
         s = l.strip()
         if s == 'rules:': rules_idx = i
-        elif s == 'dns:': dns_idx = i
-        elif s == 'nameserver-policy:': ns_policy_idx = i
-        elif s == 'fake-ip-filter:': fake_ip_filter_idx = i
-    if rules_idx == -1: return
     
+    if rules_idx == -1: return
+
+    # 2. Scrub ALL previous bypass-related lines to prevent duplicates
     scrubbed = []
-    hb_patterns = [f'"{hb}"' for hb in HARDBONES] + [f'"+.{hb}"' for hb in HARDBONES] + [f'"*.{hb}"' for hb in HARDBONES]
+    
+    # Simple patterns to catch our injections
+    bypass_patterns = [f'"{d}"' for d in BYPASS_DOMAINS] + [f'"+.{d}"' for d in BYPASS_DOMAINS] + [f'"*.{d}"' for d in BYPASS_DOMAINS]
+    
     for i, l in enumerate(lines[:rules_idx+1]):
         s = l.strip()
-        if any(pat in s for pat in hb_patterns): continue
+        # Skip previously injected lines in maps/lists
+        is_bypass_line = any(pat in s for pat in bypass_patterns)
+        if is_bypass_line and ("dhcp://system" in s or "- \"*." in s or "- \"+." in s or "- \"" in s):
+            continue
         scrubbed.append(l)
 
+    # 3. Re-inject into DNS blocks
     final_lines = []
     for l in scrubbed:
         final_lines.append(l)
         if l.strip() == 'nameserver-policy:':
-            for hb in HARDBONES:
-                final_lines.append(f'    "{hb}": "dhcp://system"\n')
-                final_lines.append(f'    "+.{hb}": "dhcp://system"\n')
+            for d in BYPASS_DOMAINS:
+                final_lines.append(f'    "{d}": "dhcp://system"\n')
+                final_lines.append(f'    "+.{d}": "dhcp://system"\n')
         if l.strip() == 'fake-ip-filter:':
-            for hb in HARDBONES:
-                final_lines.append(f'    - "+.{hb}"\n')
-                final_lines.append(f'    - "*.{hb}"\n')
-                final_lines.append(f'    - "{hb}"\n')
+            for d in BYPASS_DOMAINS:
+                final_lines.append(f'    - "+.{d}"\n')
+                final_lines.append(f'    - "*.{d}"\n')
+                final_lines.append(f'    - "{d}"\n')
 
     final_lines.append('\n  # 硬骨头内网放行区 (Highest Priority)\n')
     for hb in HARDBONES: final_lines.append(f'  - DOMAIN-SUFFIX,{hb},DIRECT\n')
@@ -173,9 +182,11 @@ def process_surfboard(file_path, rules):
     for l in lines[:r_idx+1]:
         if l.startswith('skip-proxy ='):
             curr = l.strip().split('=')[1].strip()
-            missing = [hb for hb in HARDBONES if hb not in curr]
-            if missing: l = f'skip-proxy = {curr}, ' + ', '.join([f'*.{hb}, {hb}' for hb in missing]) + '\n'
+            missing = [d for d in BYPASS_DOMAINS if d not in curr]
+            if missing:
+                l = f'skip-proxy = {curr}, ' + ', '.join([f'*.{d}, {d}' for d in missing]) + '\n'
         new_lines.append(l)
+
     new_lines.append('\n# HARDBONES\n')
     for hb in HARDBONES: new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
     for r in rules:
@@ -195,9 +206,10 @@ def process_shadowrocket(file_path, rules):
     new_lines = []
     for l in lines[:s_idx+1]:
         if l.startswith('skip-proxy ='):
-            m = [hb for hb in HARDBONES if hb not in l]
-            if m: l = l.strip() + ', ' + ', '.join([f'*.{hb}, {hb}' for hb in m]) + '\n'
+            m = [d for d in BYPASS_DOMAINS if d not in l]
+            if m: l = l.strip() + ', ' + ', '.join([f'*.{d}, {d}' for d in m]) + '\n'
         new_lines.append(l)
+    
     new_lines.append('\n# HARDBONES\n')
     for hb in HARDBONES: new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
     for r in rules:
