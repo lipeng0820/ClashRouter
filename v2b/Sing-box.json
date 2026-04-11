@@ -144,7 +144,7 @@
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "dl.google.com"
                 ]
@@ -192,21 +192,15 @@
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "dl.l.google.com"
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "mtalk.google.com"
-                ]
-            },
-            {
-                "outbound": "direct",
-                "domain": [
-                    "fonts.gstatic.com"
                 ]
             },
             {
@@ -312,7 +306,7 @@
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "fonts.googleapis.com"
                 ]
@@ -366,55 +360,55 @@
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "update.googleapis.com"
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "alt1-mtalk.google.com"
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "alt2-mtalk.google.com"
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "alt3-mtalk.google.com"
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "alt4-mtalk.google.com"
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "alt5-mtalk.google.com"
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "alt6-mtalk.google.com"
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "alt7-mtalk.google.com"
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "alt8-mtalk.google.com"
                 ]
@@ -522,7 +516,7 @@
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "translate.googleapis.com"
                 ]
@@ -660,7 +654,7 @@
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "clientservices.googleapis.com"
                 ]

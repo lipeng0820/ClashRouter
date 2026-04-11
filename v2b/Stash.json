@@ -308,7 +308,7 @@ rules:
   - IP-CIDR,127.0.0.0/8,DIRECT
   - IP-CIDR,100.64.0.0/10,DIRECT
   - DOMAIN,us.weibo.com,$app_name
-  - DOMAIN,dl.google.com,DIRECT
+  - DOMAIN,dl.google.com,$app_name
   - DOMAIN,msg.umeng.com,DIRECT
   - DOMAIN,app.adjust.com,DIRECT
   - DOMAIN,log.mmstat.com,DIRECT
@@ -316,9 +316,8 @@ rules:
   - DOMAIN,intl.iqiyi.com,$app_name
   - DOMAIN,cc.tvbs.com.tw,$app_name
   - DOMAIN,sycm.mmstat.com,DIRECT
-  - DOMAIN,dl.l.google.com,DIRECT
-  - DOMAIN,mtalk.google.com,DIRECT
-  - DOMAIN,fonts.gstatic.com,DIRECT
+  - DOMAIN,dl.l.google.com,$app_name
+  - DOMAIN,mtalk.google.com,$app_name
   - DOMAIN,tv.applemusic.com,$app_name
   - DOMAIN,atv-ps.amazon.com,$app_name
   - DOMAIN,fls-na.amazon.com,$app_name
@@ -336,7 +335,7 @@ rules:
   - DOMAIN,sms.imagetasks.com,DIRECT
   - DOMAIN,hbolb.onwardsmg.com,$app_name
   - DOMAIN,apiintl.biliapi.net,$app_name
-  - DOMAIN,fonts.googleapis.com,DIRECT
+  - DOMAIN,fonts.googleapis.com,$app_name
   - DOMAIN,analytics.strava.com,DIRECT
   - DOMAIN,mobileso.bz.mgtv.com,$app_name
   - DOMAIN,link.theplatform.com,$app_name
@@ -345,15 +344,15 @@ rules:
   - DOMAIN,assets2.xboxlive.com,$app_name
   - DOMAIN,cacerts.digicert.com,$app_name
   - DOMAIN,speedtest.macpaw.com,DIRECT
-  - DOMAIN,update.googleapis.com,DIRECT
-  - DOMAIN,alt1-mtalk.google.com,DIRECT
-  - DOMAIN,alt2-mtalk.google.com,DIRECT
-  - DOMAIN,alt3-mtalk.google.com,DIRECT
-  - DOMAIN,alt4-mtalk.google.com,DIRECT
-  - DOMAIN,alt5-mtalk.google.com,DIRECT
-  - DOMAIN,alt6-mtalk.google.com,DIRECT
-  - DOMAIN,alt7-mtalk.google.com,DIRECT
-  - DOMAIN,alt8-mtalk.google.com,DIRECT
+  - DOMAIN,update.googleapis.com,$app_name
+  - DOMAIN,alt1-mtalk.google.com,$app_name
+  - DOMAIN,alt2-mtalk.google.com,$app_name
+  - DOMAIN,alt3-mtalk.google.com,$app_name
+  - DOMAIN,alt4-mtalk.google.com,$app_name
+  - DOMAIN,alt5-mtalk.google.com,$app_name
+  - DOMAIN,alt6-mtalk.google.com,$app_name
+  - DOMAIN,alt7-mtalk.google.com,$app_name
+  - DOMAIN,alt8-mtalk.google.com,$app_name
   - DOMAIN,outlook.office365.com,DIRECT
   - DOMAIN,apm-misaka.biliapi.net,$app_name
   - DOMAIN,players.brightcove.net,$app_name
@@ -371,7 +370,7 @@ rules:
   - DOMAIN,youtubei.googleapis.com,$app_name
   - DOMAIN,intel-cache.m.iqiyi.com,$app_name
   - DOMAIN,clubhouse.pubnubapi.com,$app_name
-  - DOMAIN,translate.googleapis.com,DIRECT
+  - DOMAIN,translate.googleapis.com,$app_name
   - DOMAIN,pubads.g.doubleclick.net,DIRECT
   - DOMAIN,gamer2-cds.cdn.hinet.net,$app_name
   - DOMAIN,cbsi.live.ott.irdeto.com,$app_name
@@ -394,7 +393,7 @@ rules:
   - DOMAIN,dai3fd1oh325y.cloudfront.net,$app_name
   - DOMAIN,dfp6rglgjqszk.cloudfront.net,$app_name
   - DOMAIN,d3c33hcgiwev3.cloudfront.net,$app_name
-  - DOMAIN,clientservices.googleapis.com,DIRECT
+  - DOMAIN,clientservices.googleapis.com,$app_name
   - DOMAIN,d25xi40x97liuc.cloudfront.net,$app_name
   - DOMAIN,d22qjgkvxw22r6.cloudfront.net,$app_name
   - DOMAIN,d1v5ir2lpwr8os.cloudfront.net,$app_name

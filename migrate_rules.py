@@ -40,6 +40,36 @@ DEFAULT_FORCE_DIRECT_DOMAINS = [
 ]
 FORCE_DIRECT_DOMAINS = sorted(set(DEFAULT_FORCE_DIRECT_DOMAINS + load_custom_direct_domains(CUSTOM_DIRECT_DOMAINS_PATH)))
 
+# Reliability proxy list for domains frequently blocked on DIRECT in CN networks.
+FORCE_PROXY_DOMAINS = [
+    "fonts.gstatic.com",
+    "fonts.googleapis.com",
+    "clientservices.googleapis.com",
+    "update.googleapis.com",
+    "translate.googleapis.com",
+    "dl.google.com",
+    "dl.l.google.com",
+    "mtalk.google.com",
+    "alt1-mtalk.google.com",
+    "alt2-mtalk.google.com",
+    "alt3-mtalk.google.com",
+    "alt4-mtalk.google.com",
+    "alt5-mtalk.google.com",
+    "alt6-mtalk.google.com",
+    "alt7-mtalk.google.com",
+    "alt8-mtalk.google.com",
+]
+
+# If Cloudflare/Google DoH is not reachable locally, Google-family DNS resolution may timeout.
+# Rewrite these to a reachable domestic DoH for stability.
+DNS_POLICY_REWRITE = {
+    "+.google.com": "https://doh.pub/dns-query",
+    "+.googleapis.com": "https://doh.pub/dns-query",
+    "+.googleapis.cn": "https://doh.pub/dns-query",
+    "+.googlevideo.com": "https://doh.pub/dns-query",
+    "+.gstatic.com": "https://doh.pub/dns-query",
+}
+
 # Kernel-level Bypass Domains (Injected into skip-proxy/fake-ip-filter to bypass VPN tunnel entirely)
 BYPASS_DOMAINS = [
     "apple.com", "icloud.com", "itunes.apple.com", "mzstatic.com", 
@@ -74,6 +104,8 @@ SMART_OVERRIDES = {
 }
 for _d in FORCE_DIRECT_DOMAINS:
     SMART_OVERRIDES[_d] = "DIRECT"
+for _d in FORCE_PROXY_DOMAINS:
+    SMART_OVERRIDES[_d] = "PROXY"
 
 # Shadowrocket: US priority routing chain for Capital One / PayPal / Claude iOS
 SR_US_PRIMARY_POLICY = "US 美丽合众"
@@ -187,13 +219,24 @@ def process_clash(file_path, rules):
 
     # 3. Re-inject into DNS blocks
     final_lines = []
+    in_nameserver_policy = False
     for l in scrubbed:
+        stripped = l.strip()
+        if stripped == 'nameserver-policy:':
+            in_nameserver_policy = True
+        elif in_nameserver_policy and stripped and not l.startswith('    '):
+            in_nameserver_policy = False
+        elif in_nameserver_policy:
+            m = re.match(r'^(\s*)"([^"]+)":\s*"([^"]+)"\s*$', l.rstrip('\n'))
+            if m and m.group(2) in DNS_POLICY_REWRITE:
+                l = f'{m.group(1)}"{m.group(2)}": "{DNS_POLICY_REWRITE[m.group(2)]}"\n'
+
         final_lines.append(l)
-        if l.strip() == 'nameserver-policy:':
+        if stripped == 'nameserver-policy:':
             for d in BYPASS_DOMAINS:
                 final_lines.append(f'    "{d}": "dhcp://system"\n')
                 final_lines.append(f'    "+.{d}": "dhcp://system"\n')
-        if l.strip() == 'fake-ip-filter:':
+        if stripped == 'fake-ip-filter:':
             for d in BYPASS_DOMAINS:
                 final_lines.append(f'    - "+.{d}"\n')
                 final_lines.append(f'    - "*.{d}"\n')
