@@ -66,6 +66,10 @@ FORCE_PROXY_EXACT_DOMAINS = [
     "x.900820.xyz",
 ]
 
+# For Clash-family outputs, forced-proxy domains should bypass user select group
+# (which may currently point to DIRECT) and always use an actual proxy group.
+FORCED_PROXY_POLICY_CLASH = "自动选择"
+
 # If Cloudflare/Google DoH is not reachable locally, Google-family DNS resolution may timeout.
 # Rewrite these to a reachable domestic DoH for stability.
 DNS_POLICY_REWRITE = {
@@ -253,9 +257,9 @@ def process_clash(file_path, rules):
     if FORCE_PROXY_EXACT_DOMAINS or FORCE_PROXY_DOMAINS:
         final_lines.append('\n  # 强制代理域名 (Blocked/Unstable on DIRECT)\n')
         for d in FORCE_PROXY_EXACT_DOMAINS:
-            final_lines.append(f'  - DOMAIN,{d},$app_name\n')
+            final_lines.append(f'  - DOMAIN,{d},{FORCED_PROXY_POLICY_CLASH}\n')
         for d in FORCE_PROXY_DOMAINS:
-            final_lines.append(f'  - DOMAIN-SUFFIX,{d},$app_name\n')
+            final_lines.append(f'  - DOMAIN-SUFFIX,{d},{FORCED_PROXY_POLICY_CLASH}\n')
 
     if FORCE_DIRECT_DOMAINS:
         final_lines.append('\n  # 兼容性直连域名 (Avoid CN .com Misroute)\n')
@@ -299,9 +303,9 @@ def process_surfboard(file_path, rules):
     if FORCE_PROXY_EXACT_DOMAINS or FORCE_PROXY_DOMAINS:
         new_lines.append('\n# Forced Proxy Domains\n')
         for d in FORCE_PROXY_EXACT_DOMAINS:
-            new_lines.append(f'DOMAIN,{d},$app_name\n')
+            new_lines.append(f'DOMAIN,{d},{FORCED_PROXY_POLICY_CLASH}\n')
         for d in FORCE_PROXY_DOMAINS:
-            new_lines.append(f'DOMAIN-SUFFIX,{d},$app_name\n')
+            new_lines.append(f'DOMAIN-SUFFIX,{d},{FORCED_PROXY_POLICY_CLASH}\n')
 
     if FORCE_DIRECT_DOMAINS:
         new_lines.append('\n# Compatibility Direct Domains\n')
