@@ -6,6 +6,7 @@ import re
 MD_PATH = "分流规则参考.md"
 V2B_DIR = "v2b"
 CUSTOM_DIRECT_DOMAINS_PATH = "custom_direct_domains.txt"
+CUSTOM_PROXY_DOMAINS_PATH = "custom_proxy_domains.txt"
 
 def load_custom_direct_domains(file_path):
     if not os.path.exists(file_path):
@@ -20,6 +21,20 @@ def load_custom_direct_domains(file_path):
             if re.fullmatch(r"[a-z0-9.-]+", s):
                 domains.append(s)
     # Stable order + deduplication
+    return sorted(set(domains))
+
+def load_custom_proxy_domains(file_path):
+    if not os.path.exists(file_path):
+        return []
+    domains = []
+    with open(file_path, "r", encoding="utf-8") as f:
+        for line in f:
+            s = line.strip().lower()
+            if not s or s.startswith("#"):
+                continue
+            s = s.lstrip(".")
+            if re.fullmatch(r"[a-z0-9.-]+", s):
+                domains.append(s)
     return sorted(set(domains))
 
 # "Hardbone" Bypass List (Injected at the very top of rules and handled as High Priority)
@@ -58,7 +73,9 @@ FORCE_PROXY_DOMAINS = [
     "alt6-mtalk.google.com",
     "alt7-mtalk.google.com",
     "alt8-mtalk.google.com",
+    "900820.xyz",
 ]
+FORCE_PROXY_DOMAINS = sorted(set(FORCE_PROXY_DOMAINS + load_custom_proxy_domains(CUSTOM_PROXY_DOMAINS_PATH)))
 
 # If Cloudflare/Google DoH is not reachable locally, Google-family DNS resolution may timeout.
 # Rewrite these to a reachable domestic DoH for stability.
@@ -242,6 +259,11 @@ def process_clash(file_path, rules):
                 final_lines.append(f'    - "*.{d}"\n')
                 final_lines.append(f'    - "{d}"\n')
 
+    if FORCE_PROXY_DOMAINS:
+        final_lines.append('\n  # 强制代理域名 (Blocked/Unstable on DIRECT)\n')
+        for d in FORCE_PROXY_DOMAINS:
+            final_lines.append(f'  - DOMAIN-SUFFIX,{d},$app_name\n')
+
     if FORCE_DIRECT_DOMAINS:
         final_lines.append('\n  # 兼容性直连域名 (Avoid CN .com Misroute)\n')
         for d in FORCE_DIRECT_DOMAINS:
@@ -280,6 +302,11 @@ def process_surfboard(file_path, rules):
             if missing:
                 l = f'skip-proxy = {curr}, ' + ', '.join([f'*.{d}, {d}' for d in missing]) + '\n'
         new_lines.append(l)
+
+    if FORCE_PROXY_DOMAINS:
+        new_lines.append('\n# Forced Proxy Domains\n')
+        for d in FORCE_PROXY_DOMAINS:
+            new_lines.append(f'DOMAIN-SUFFIX,{d},$app_name\n')
 
     if FORCE_DIRECT_DOMAINS:
         new_lines.append('\n# Compatibility Direct Domains\n')
@@ -373,6 +400,11 @@ def process_shadowrocket(file_path, rules):
     for rtype, payload in SR_US_PRIORITY_RULES:
         new_lines.append(f'{rtype},{payload},{SR_US_PRIORITY_POLICY}\n')
 
+    if FORCE_PROXY_DOMAINS:
+        new_lines.append('\n# Forced Proxy Domains\n')
+        for d in FORCE_PROXY_DOMAINS:
+            new_lines.append(f'DOMAIN-SUFFIX,{d},PROXY\n')
+
     if FORCE_DIRECT_DOMAINS:
         new_lines.append('\n# Compatibility Direct Domains\n')
         for d in FORCE_DIRECT_DOMAINS:
@@ -401,7 +433,10 @@ def process_singbox(file_path, rules):
         data['dns']['servers'].append({"tag": "local", "address": "local", "detour": "direct"})
     local_suffix = sorted(set(HARDBONES + FORCE_DIRECT_DOMAINS))
     data['dns']['rules'] = [{"domain_suffix": local_suffix, "server": "local"}] + [r for r in data['dns']['rules'] if r.get('server') != 'local']
-    r_rules = [{"outbound": "direct", "domain_suffix": local_suffix}, {"outbound": "direct", "ip_cidr": ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "::1/128"]}]
+    r_rules = []
+    if FORCE_PROXY_DOMAINS:
+        r_rules.append({"outbound": "proxy", "domain_suffix": FORCE_PROXY_DOMAINS})
+    r_rules.extend([{"outbound": "direct", "domain_suffix": local_suffix}, {"outbound": "direct", "ip_cidr": ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "::1/128"]}])
     for r in rules:
         out = "proxy" if r['policy'] == 'PROXY' else "direct" if r['policy'] == 'DIRECT' else "block"
         if r['type'] == 'MATCH': data['route']['final'] = out; continue

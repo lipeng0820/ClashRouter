@@ -86,6 +86,28 @@
     "route": {
         "rules": [
             {
+                "outbound": "proxy",
+                "domain_suffix": [
+                    "900820.xyz",
+                    "alt1-mtalk.google.com",
+                    "alt2-mtalk.google.com",
+                    "alt3-mtalk.google.com",
+                    "alt4-mtalk.google.com",
+                    "alt5-mtalk.google.com",
+                    "alt6-mtalk.google.com",
+                    "alt7-mtalk.google.com",
+                    "alt8-mtalk.google.com",
+                    "clientservices.googleapis.com",
+                    "dl.google.com",
+                    "dl.l.google.com",
+                    "fonts.googleapis.com",
+                    "fonts.gstatic.com",
+                    "mtalk.google.com",
+                    "translate.googleapis.com",
+                    "update.googleapis.com"
+                ]
+            },
+            {
                 "outbound": "direct",
                 "domain_suffix": [
                     "aigei.com",

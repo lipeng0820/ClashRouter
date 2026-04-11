@@ -1,0 +1,6 @@
+# One domain suffix per line.
+# Purpose: force PROXY routing for domains blocked/unstable on DIRECT.
+# Example:
+#   example.com
+
+900820.xyz

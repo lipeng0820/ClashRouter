@@ -313,6 +313,25 @@ proxy-groups:
 
 rules:
 
+  # 强制代理域名 (Blocked/Unstable on DIRECT)
+  - DOMAIN-SUFFIX,900820.xyz,$app_name
+  - DOMAIN-SUFFIX,alt1-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt2-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt3-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt4-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt5-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt6-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt7-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt8-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,clientservices.googleapis.com,$app_name
+  - DOMAIN-SUFFIX,dl.google.com,$app_name
+  - DOMAIN-SUFFIX,dl.l.google.com,$app_name
+  - DOMAIN-SUFFIX,fonts.googleapis.com,$app_name
+  - DOMAIN-SUFFIX,fonts.gstatic.com,$app_name
+  - DOMAIN-SUFFIX,mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,translate.googleapis.com,$app_name
+  - DOMAIN-SUFFIX,update.googleapis.com,$app_name
+
   # 兼容性直连域名 (Avoid CN .com Misroute)
   - DOMAIN-SUFFIX,aigei.com,DIRECT
 
