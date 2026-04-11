@@ -51,6 +51,25 @@ SMART_OVERRIDES = {
     "hdslb.com": "DIRECT"
 }
 
+# Shadowrocket: US priority routing chain for Capital One / PayPal / Claude iOS
+SR_US_PRIMARY_POLICY = "US 美丽合众"
+SR_US_BACKUP_POLICY = "US-其他节点"
+SR_US_PRIORITY_POLICY = "US-金融与Claude优先"
+SR_US_BACKUP_REGEX = "(?=.*(US|USA|United States|美国))^((?!(美丽合众)).)*$"
+SR_US_PRIORITY_RULES = [
+    ("DOMAIN-KEYWORD", "capitalone"),
+    ("DOMAIN-SUFFIX", "capitalone.com"),
+    ("DOMAIN-SUFFIX", "capitalone360.com"),
+    ("DOMAIN-SUFFIX", "paypal.com"),
+    ("DOMAIN-SUFFIX", "paypal.me"),
+    ("DOMAIN-SUFFIX", "paypalobjects.com"),
+    ("DOMAIN-SUFFIX", "paypal-mktg.com"),
+    ("DOMAIN-SUFFIX", "claude.ai"),
+    ("DOMAIN-SUFFIX", "anthropic.com"),
+    ("DOMAIN-SUFFIX", "anthropic.ai"),
+    ("PROCESS-NAME", "Claude"),
+]
+
 def parse_md_rules(md_path):
     if not os.path.exists(md_path): return []
     with open(md_path, 'r', encoding='utf-8') as f:
@@ -195,21 +214,81 @@ def process_surfboard(file_path, rules):
         else: new_lines.append(f"{r['type']},{r['payload']},{p}\n")
     with open(file_path, 'w', encoding='utf-8') as f: f.writelines(new_lines)
 
-def process_shadowrocket(file_path, rules):
-    with open(file_path, 'r', encoding='utf-8') as f: lines = f.readlines()
+def section_bounds(lines, section_name):
     s_idx = -1
     e_idx = -1
+    section_header = f'[{section_name}]'
     for i, l in enumerate(lines):
-        if l.strip() == '[Rule]': s_idx = i
-        elif s_idx != -1 and l.strip().startswith('['): e_idx = i; break
+        if l.strip() == section_header:
+            s_idx = i
+            break
+    if s_idx == -1:
+        return -1, -1
+    e_idx = len(lines)
+    for i in range(s_idx + 1, len(lines)):
+        if lines[i].strip().startswith('['):
+            e_idx = i
+            break
+    return s_idx, e_idx
+
+def ensure_shadowrocket_proxy_groups(lines):
+    p_s_idx, p_e_idx = section_bounds(lines, "Proxy Group")
+    r_s_idx, _ = section_bounds(lines, "Rule")
+
+    managed_comment = '# 首选 US 美丽合众，故障后回落其他美国节点，再回落到当前用户选择'
+    managed_lines = [
+        f'{managed_comment}\n',
+        f'{SR_US_BACKUP_POLICY} = fallback, policy-regex-filter={SR_US_BACKUP_REGEX}, interval=300, timeout=5, url=http://www.gstatic.com/generate_204, hidden=1\n',
+        f'{SR_US_PRIORITY_POLICY} = fallback, {SR_US_PRIMARY_POLICY}, {SR_US_BACKUP_POLICY}, PROXY, interval=300, timeout=5, url=http://www.gstatic.com/generate_204\n'
+    ]
+    managed_prefixes = (f'{SR_US_BACKUP_POLICY} =', f'{SR_US_PRIORITY_POLICY} =')
+
+    if p_s_idx == -1:
+        insert_idx = r_s_idx if r_s_idx != -1 else len(lines)
+        new_lines = lines[:insert_idx]
+        if new_lines and new_lines[-1].strip():
+            new_lines.append('\n')
+        new_lines.append('[Proxy Group]\n')
+        new_lines.extend(managed_lines)
+        new_lines.append('\n')
+        new_lines.extend(lines[insert_idx:])
+        return new_lines
+
+    preserved = []
+    for l in lines[p_s_idx + 1:p_e_idx]:
+        stripped = l.strip()
+        if stripped == managed_comment:
+            continue
+        if any(stripped.startswith(prefix) for prefix in managed_prefixes):
+            continue
+        preserved.append(l)
+
+    new_lines = lines[:p_s_idx + 1]
+    new_lines.extend(managed_lines)
+    if preserved and preserved[0].strip():
+        new_lines.append('\n')
+    new_lines.extend(preserved)
+    new_lines.extend(lines[p_e_idx:])
+    return new_lines
+
+def process_shadowrocket(file_path, rules):
+    with open(file_path, 'r', encoding='utf-8') as f: lines = f.readlines()
+
+    lines = ensure_shadowrocket_proxy_groups(lines)
+    s_idx, e_idx = section_bounds(lines, "Rule")
     if s_idx == -1: return
+
     new_lines = []
     for l in lines[:s_idx+1]:
         if l.startswith('skip-proxy ='):
             m = [d for d in BYPASS_DOMAINS if d not in l]
             if m: l = l.strip() + ', ' + ', '.join([f'*.{d}, {d}' for d in m]) + '\n'
         new_lines.append(l)
-    
+
+    new_lines.append('\n# Capital One / PayPal / Claude iOS App\n')
+    for rtype, payload in SR_US_PRIORITY_RULES:
+        new_lines.append(f'{rtype},{payload},{SR_US_PRIORITY_POLICY}\n')
+
     new_lines.append('\n# HARDBONES\n')
     for hb in HARDBONES: new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
     for r in rules:
