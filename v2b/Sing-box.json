@@ -387,12 +387,6 @@
                 ]
             },
             {
-                "outbound": "direct",
-                "domain": [
-                    "update.googleapis.com"
-                ]
-            },
-            {
                 "outbound": "proxy",
                 "domain": [
                     "alt1-mtalk.google.com"
@@ -438,6 +432,12 @@
                 "outbound": "proxy",
                 "domain": [
                     "alt8-mtalk.google.com"
+                ]
+            },
+            {
+                "outbound": "direct",
+                "domain": [
+                    "update.googleapis.com"
                 ]
             },
             {
@@ -8418,6 +8418,12 @@
                 "outbound": "direct",
                 "domain_suffix": [
                     "zhimg.com"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain_suffix": [
+                    "900820.xyz"
                 ]
             },
             {
