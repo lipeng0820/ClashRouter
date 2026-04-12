@@ -130,7 +130,7 @@ for _d in FORCE_PROXY_EXACT_DOMAINS:
 # Shadowrocket: US priority routing chain for Capital One / PayPal / Claude iOS
 SR_US_PRIMARY_POLICY = "US 美丽合众"
 SR_US_BACKUP_POLICY = "US-其他节点"
-SR_US_PRIORITY_POLICY = "US-金融与Claude优先"
+SR_US_PRIORITY_POLICY = "US-AI与金融优先"
 SR_US_BACKUP_REGEX = "(?=.*(US|USA|United States|美国))^((?!(美丽合众)).)*$"
 SR_US_PRIORITY_RULES = [
     ("DOMAIN-KEYWORD", "capitalone"),
@@ -144,6 +144,18 @@ SR_US_PRIORITY_RULES = [
     ("DOMAIN-SUFFIX", "anthropic.com"),
     ("DOMAIN-SUFFIX", "anthropic.ai"),
     ("PROCESS-NAME", "Claude"),
+    ("DOMAIN-SUFFIX", "chatgpt.com"),
+    ("DOMAIN-SUFFIX", "openai.com"),
+    ("DOMAIN-SUFFIX", "oaistatic.com"),
+    ("DOMAIN-SUFFIX", "oaiusercontent.com"),
+    ("DOMAIN-SUFFIX", "ai.com"),
+    ("PROCESS-NAME", "ChatGPT"),
+    ("DOMAIN-SUFFIX", "gemini.google.com"),
+    ("DOMAIN-SUFFIX", "bard.google.com"),
+    ("DOMAIN-SUFFIX", "aistudio.google.com"),
+    ("DOMAIN-KEYWORD", "generativelanguage"),
+    ("DOMAIN-SUFFIX", "perplexity.ai"),
+    ("PROCESS-NAME", "Perplexity"),
 ]
 
 def parse_md_rules(md_path):

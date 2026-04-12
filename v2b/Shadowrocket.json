@@ -19,22 +19,36 @@ udp-policy-not-supported-behaviour = REJECT
 [Proxy Group]
 # 首选 US 美丽合众，故障后回落其他美国节点，再回落到当前用户选择
 US-其他节点 = fallback, policy-regex-filter=(?=.*(US|USA|United States|美国))^((?!(美丽合众)).)*$, interval=300, timeout=5, url=http://www.gstatic.com/generate_204, hidden=1
+US-AI与金融优先 = fallback, US 美丽合众, US-其他节点, PROXY, interval=300, timeout=5, url=http://www.gstatic.com/generate_204
+
 US-金融与Claude优先 = fallback, US 美丽合众, US-其他节点, PROXY, interval=300, timeout=5, url=http://www.gstatic.com/generate_204
 
 [Rule]
 
 # Capital One / PayPal / Claude iOS App
-DOMAIN-KEYWORD,capitalone,US-金融与Claude优先
-DOMAIN-SUFFIX,capitalone.com,US-金融与Claude优先
-DOMAIN-SUFFIX,capitalone360.com,US-金融与Claude优先
-DOMAIN-SUFFIX,paypal.com,US-金融与Claude优先
-DOMAIN-SUFFIX,paypal.me,US-金融与Claude优先
-DOMAIN-SUFFIX,paypalobjects.com,US-金融与Claude优先
-DOMAIN-SUFFIX,paypal-mktg.com,US-金融与Claude优先
-DOMAIN-SUFFIX,claude.ai,US-金融与Claude优先
-DOMAIN-SUFFIX,anthropic.com,US-金融与Claude优先
-DOMAIN-SUFFIX,anthropic.ai,US-金融与Claude优先
-PROCESS-NAME,Claude,US-金融与Claude优先
+DOMAIN-KEYWORD,capitalone,US-AI与金融优先
+DOMAIN-SUFFIX,capitalone.com,US-AI与金融优先
+DOMAIN-SUFFIX,capitalone360.com,US-AI与金融优先
+DOMAIN-SUFFIX,paypal.com,US-AI与金融优先
+DOMAIN-SUFFIX,paypal.me,US-AI与金融优先
+DOMAIN-SUFFIX,paypalobjects.com,US-AI与金融优先
+DOMAIN-SUFFIX,paypal-mktg.com,US-AI与金融优先
+DOMAIN-SUFFIX,claude.ai,US-AI与金融优先
+DOMAIN-SUFFIX,anthropic.com,US-AI与金融优先
+DOMAIN-SUFFIX,anthropic.ai,US-AI与金融优先
+PROCESS-NAME,Claude,US-AI与金融优先
+DOMAIN-SUFFIX,chatgpt.com,US-AI与金融优先
+DOMAIN-SUFFIX,openai.com,US-AI与金融优先
+DOMAIN-SUFFIX,oaistatic.com,US-AI与金融优先
+DOMAIN-SUFFIX,oaiusercontent.com,US-AI与金融优先
+DOMAIN-SUFFIX,ai.com,US-AI与金融优先
+PROCESS-NAME,ChatGPT,US-AI与金融优先
+DOMAIN-SUFFIX,gemini.google.com,US-AI与金融优先
+DOMAIN-SUFFIX,bard.google.com,US-AI与金融优先
+DOMAIN-SUFFIX,aistudio.google.com,US-AI与金融优先
+DOMAIN-KEYWORD,generativelanguage,US-AI与金融优先
+DOMAIN-SUFFIX,perplexity.ai,US-AI与金融优先
+PROCESS-NAME,Perplexity,US-AI与金融优先
 
 # Forced Proxy Domains
 DOMAIN,x.900820.xyz,PROXY
