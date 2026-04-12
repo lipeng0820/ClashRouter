@@ -95,6 +95,7 @@
                 "outbound": "proxy",
                 "domain_suffix": [
                     "900820.xyz",
+                    "ai.com",
                     "alt1-mtalk.google.com",
                     "alt2-mtalk.google.com",
                     "alt3-mtalk.google.com",
@@ -103,10 +104,14 @@
                     "alt6-mtalk.google.com",
                     "alt7-mtalk.google.com",
                     "alt8-mtalk.google.com",
+                    "chatgpt.com",
                     "github.com",
                     "googleapis.com",
                     "googleusercontent.com",
                     "mtalk.google.com",
+                    "oaistatic.com",
+                    "oaiusercontent.com",
+                    "openai.com",
                     "run.app",
                     "telegram.org"
                 ]
@@ -170,6 +175,12 @@
                 ]
             },
             {
+                "outbound": "proxy",
+                "domain": [
+                    "tv.apple.com"
+                ]
+            },
+            {
                 "outbound": "direct",
                 "domain": [
                     "dl.google.com"
@@ -212,6 +223,24 @@
                 ]
             },
             {
+                "outbound": "proxy",
+                "domain": [
+                    "apps.apple.com"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain": [
+                    "www.icloud.com"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain": [
+                    "ocsp.apple.com"
+                ]
+            },
+            {
                 "outbound": "direct",
                 "domain": [
                     "sycm.mmstat.com"
@@ -221,6 +250,12 @@
                 "outbound": "direct",
                 "domain": [
                     "dl.l.google.com"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain": [
+                    "books.apple.com"
                 ]
             },
             {
@@ -308,6 +343,12 @@
                 ]
             },
             {
+                "outbound": "proxy",
+                "domain": [
+                    "gateway.icloud.com"
+                ]
+            },
+            {
                 "outbound": "direct",
                 "domain": [
                     "smtp.office365.com"
@@ -328,6 +369,12 @@
             {
                 "outbound": "proxy",
                 "domain": [
+                    "linear.tv.apple.com"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain": [
                     "hbolb.onwardsmg.com"
                 ]
             },
@@ -335,6 +382,12 @@
                 "outbound": "proxy",
                 "domain": [
                     "apiintl.biliapi.net"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain": [
+                    "news-edge.apple.com"
                 ]
             },
             {
@@ -370,6 +423,12 @@
             {
                 "outbound": "proxy",
                 "domain": [
+                    "testflight.apple.com"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain": [
                     "assets1.xboxlive.com"
                 ]
             },
@@ -377,6 +436,18 @@
                 "outbound": "proxy",
                 "domain": [
                     "assets2.xboxlive.com"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain": [
+                    "beta.music.apple.com"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain": [
+                    "lookup-api.apple.com"
                 ]
             },
             {
@@ -443,6 +514,24 @@
                 "outbound": "proxy",
                 "domain": [
                     "update.googleapis.com"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain": [
+                    "news-assets.apple.com"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain": [
+                    "news-client.apple.com"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain": [
+                    "news-events.apple.com"
                 ]
             },
             {
@@ -610,6 +699,12 @@
             {
                 "outbound": "proxy",
                 "domain": [
+                    "amp-api.podcasts.apple.com"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain": [
                     "apple.comscoreresearch.com"
                 ]
             },
@@ -683,6 +778,12 @@
                 "outbound": "proxy",
                 "domain": [
                     "d3c33hcgiwev3.cloudfront.net"
+                ]
+            },
+            {
+                "outbound": "proxy",
+                "domain": [
+                    "news-client-search.apple.com"
                 ]
             },
             {
@@ -39308,7 +39409,7 @@
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain_suffix": [
                     "smoot.apple.com"
                 ]
@@ -42608,7 +42709,7 @@
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "block",
                 "domain_suffix": [
                     "iadsdk.apple.com"
                 ]

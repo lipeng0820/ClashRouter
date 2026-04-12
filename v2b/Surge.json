@@ -8,10 +8,6 @@ tcp-concurrent: true
 
 dns:
   nameserver-policy:
-    "apple.com": "dhcp://system"
-    "+.apple.com": "dhcp://system"
-    "icloud.com": "dhcp://system"
-    "+.icloud.com": "dhcp://system"
     "itunes.apple.com": "dhcp://system"
     "+.itunes.apple.com": "dhcp://system"
     "mzstatic.com": "dhcp://system"
@@ -98,6 +94,10 @@ dns:
     "+.mmstat.com": "dhcp://system"
     "aigei.com": "dhcp://system"
     "+.aigei.com": "dhcp://system"
+    "apple.com": "dhcp://system"
+    "+.apple.com": "dhcp://system"
+    "icloud.com": "dhcp://system"
+    "+.icloud.com": "dhcp://system"
     "googleapis.com": "dhcp://system"
     "+.googleapis.com": "https://doh.pub/dns-query"
     "googleusercontent.com": "dhcp://system"
@@ -118,12 +118,6 @@ dns:
     - https://dns.cloudflare.com/dns-query
     - https://dns.google/dns-query
   fake-ip-filter:
-    - "+.apple.com"
-    - "*.apple.com"
-    - "apple.com"
-    - "+.icloud.com"
-    - "*.icloud.com"
-    - "icloud.com"
     - "+.itunes.apple.com"
     - "*.itunes.apple.com"
     - "itunes.apple.com"
@@ -253,6 +247,12 @@ dns:
     - "+.aigei.com"
     - "*.aigei.com"
     - "aigei.com"
+    - "+.apple.com"
+    - "*.apple.com"
+    - "apple.com"
+    - "+.icloud.com"
+    - "*.icloud.com"
+    - "icloud.com"
     - "+.googleapis.com"
     - "*.googleapis.com"
     - "googleapis.com"
@@ -278,6 +278,7 @@ rules:
   # 强制代理域名 (Blocked/Unstable on DIRECT)
   - DOMAIN,x.900820.xyz,$app_name
   - DOMAIN-SUFFIX,900820.xyz,$app_name
+  - DOMAIN-SUFFIX,ai.com,$app_name
   - DOMAIN-SUFFIX,alt1-mtalk.google.com,$app_name
   - DOMAIN-SUFFIX,alt2-mtalk.google.com,$app_name
   - DOMAIN-SUFFIX,alt3-mtalk.google.com,$app_name
@@ -286,10 +287,14 @@ rules:
   - DOMAIN-SUFFIX,alt6-mtalk.google.com,$app_name
   - DOMAIN-SUFFIX,alt7-mtalk.google.com,$app_name
   - DOMAIN-SUFFIX,alt8-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,chatgpt.com,$app_name
   - DOMAIN-SUFFIX,github.com,$app_name
   - DOMAIN-SUFFIX,googleapis.com,$app_name
   - DOMAIN-SUFFIX,googleusercontent.com,$app_name
   - DOMAIN-SUFFIX,mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,oaistatic.com,$app_name
+  - DOMAIN-SUFFIX,oaiusercontent.com,$app_name
+  - DOMAIN-SUFFIX,openai.com,$app_name
   - DOMAIN-SUFFIX,run.app,$app_name
   - DOMAIN-SUFFIX,telegram.org,$app_name
 
@@ -341,6 +346,7 @@ rules:
   - IP-CIDR,127.0.0.0/8,DIRECT
   - IP-CIDR,100.64.0.0/10,DIRECT
   - DOMAIN,us.weibo.com,$app_name
+  - DOMAIN,tv.apple.com,$app_name
   - DOMAIN,dl.google.com,DIRECT
   - DOMAIN,msg.umeng.com,DIRECT
   - DOMAIN,app.adjust.com,DIRECT
@@ -348,8 +354,12 @@ rules:
   - DOMAIN,geo2.adobe.com,REJECT
   - DOMAIN,intl.iqiyi.com,$app_name
   - DOMAIN,cc.tvbs.com.tw,$app_name
+  - DOMAIN,apps.apple.com,$app_name
+  - DOMAIN,www.icloud.com,$app_name
+  - DOMAIN,ocsp.apple.com,$app_name
   - DOMAIN,sycm.mmstat.com,DIRECT
   - DOMAIN,dl.l.google.com,DIRECT
+  - DOMAIN,books.apple.com,$app_name
   - DOMAIN,mtalk.google.com,$app_name
   - DOMAIN,fonts.gstatic.com,DIRECT
   - DOMAIN,tv.applemusic.com,$app_name
@@ -364,18 +374,24 @@ rules:
   - DOMAIN,msg.umengcloud.com,DIRECT
   - DOMAIN,intl-rcd.iqiyi.com,$app_name
   - DOMAIN,hamifans.emome.net,$app_name
+  - DOMAIN,gateway.icloud.com,$app_name
   - DOMAIN,smtp.office365.com,DIRECT
   - DOMAIN,wustat.windows.com,DIRECT
   - DOMAIN,sms.imagetasks.com,DIRECT
+  - DOMAIN,linear.tv.apple.com,$app_name
   - DOMAIN,hbolb.onwardsmg.com,$app_name
   - DOMAIN,apiintl.biliapi.net,$app_name
+  - DOMAIN,news-edge.apple.com,$app_name
   - DOMAIN,fonts.googleapis.com,$app_name
   - DOMAIN,analytics.strava.com,DIRECT
   - DOMAIN,mobileso.bz.mgtv.com,$app_name
   - DOMAIN,link.theplatform.com,$app_name
   - DOMAIN,a771.dscq.akamai.net,$app_name
+  - DOMAIN,testflight.apple.com,$app_name
   - DOMAIN,assets1.xboxlive.com,$app_name
   - DOMAIN,assets2.xboxlive.com,$app_name
+  - DOMAIN,beta.music.apple.com,$app_name
+  - DOMAIN,lookup-api.apple.com,$app_name
   - DOMAIN,cacerts.digicert.com,$app_name
   - DOMAIN,speedtest.macpaw.com,DIRECT
   - DOMAIN,alt1-mtalk.google.com,$app_name
@@ -387,6 +403,9 @@ rules:
   - DOMAIN,alt7-mtalk.google.com,$app_name
   - DOMAIN,alt8-mtalk.google.com,$app_name
   - DOMAIN,update.googleapis.com,$app_name
+  - DOMAIN,news-assets.apple.com,$app_name
+  - DOMAIN,news-client.apple.com,$app_name
+  - DOMAIN,news-events.apple.com,$app_name
   - DOMAIN,outlook.office365.com,DIRECT
   - DOMAIN,apm-misaka.biliapi.net,$app_name
   - DOMAIN,players.brightcove.net,$app_name
@@ -414,6 +433,7 @@ rules:
   - DOMAIN,avodmp4s3ww-a.akamaihd.net,$app_name
   - DOMAIN,hbounify-prod.evergent.com,$app_name
   - DOMAIN,cbsservice.aws.syncbak.com,$app_name
+  - DOMAIN,amp-api.podcasts.apple.com,$app_name
   - DOMAIN,apple.comscoreresearch.com,$app_name
   - DOMAIN,file-igamecj.akamaized.net,DIRECT
   - DOMAIN,p-bstarstatic.akamaized.net,$app_name
@@ -427,6 +447,7 @@ rules:
   - DOMAIN,dai3fd1oh325y.cloudfront.net,$app_name
   - DOMAIN,dfp6rglgjqszk.cloudfront.net,$app_name
   - DOMAIN,d3c33hcgiwev3.cloudfront.net,$app_name
+  - DOMAIN,news-client-search.apple.com,$app_name
   - DOMAIN,clientservices.googleapis.com,$app_name
   - DOMAIN,d25xi40x97liuc.cloudfront.net,$app_name
   - DOMAIN,d22qjgkvxw22r6.cloudfront.net,$app_name
@@ -6888,7 +6909,7 @@ rules:
   - DOMAIN-SUFFIX,itasoftware.com,$app_name
   - DOMAIN-SUFFIX,webmproject.org,$app_name
   - DOMAIN-SUFFIX,whatbrowser.org,$app_name
-  - DOMAIN-SUFFIX,smoot.apple.com,DIRECT
+  - DOMAIN-SUFFIX,smoot.apple.com,$app_name
   - DOMAIN-SUFFIX,steamstatic.com,DIRECT
   - DOMAIN-SUFFIX,broadcasthe.net,DIRECT
   - DOMAIN-SUFFIX,accuweather.com,DIRECT
@@ -7438,7 +7459,7 @@ rules:
   - DOMAIN-SUFFIX,trafficjunky.net,REJECT
   - DOMAIN-SUFFIX,ad.caiyunapp.com,REJECT
   - DOMAIN-SUFFIX,adx-api.hupu.com,REJECT
-  - DOMAIN-SUFFIX,iadsdk.apple.com,DIRECT
+  - DOMAIN-SUFFIX,iadsdk.apple.com,REJECT
   - DOMAIN-SUFFIX,mobads.baidu.com,REJECT
   - DOMAIN-SUFFIX,adshows.21cn.com,REJECT
   - DOMAIN-SUFFIX,mobilead.kuwo.cn,REJECT

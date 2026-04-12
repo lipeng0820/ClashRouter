@@ -62,7 +62,12 @@ DEFAULT_FORCE_PROXY_DOMAINS = [
     "googleusercontent.com",
     "github.com",
     "telegram.org",
-    "run.app"
+    "run.app",
+    "chatgpt.com",
+    "openai.com",
+    "oaistatic.com",
+    "oaiusercontent.com",
+    "ai.com",
 ]
 FORCE_PROXY_DOMAINS = sorted(set(DEFAULT_FORCE_PROXY_DOMAINS + load_custom_proxy_domains(CUSTOM_PROXY_DOMAINS_PATH)))
 
@@ -87,15 +92,13 @@ DNS_POLICY_REWRITE = {
 
 # Kernel-level Bypass Domains (Injected into skip-proxy/fake-ip-filter to bypass VPN tunnel entirely)
 BYPASS_DOMAINS = [
-    "apple.com", "icloud.com", "itunes.apple.com", "mzstatic.com", 
+    "itunes.apple.com", "mzstatic.com", 
     "aaplimg.com", "cdn-apple.com", "apple-dns.net", "ls.apple.com"
 ] + HARDBONES + FORCE_DIRECT_DOMAINS
 
 # Smart Overrides: Force specific policies regardless of source file conflicts
 SMART_OVERRIDES = {
     # Apple ecosystem: Direct for infrastructure, Proxy for News/Media
-    "apple.com": "DIRECT",
-    "icloud.com": "DIRECT",
     "itunes.apple.com": "DIRECT",
     "mzstatic.com": "DIRECT",
     "aaplimg.com": "DIRECT",

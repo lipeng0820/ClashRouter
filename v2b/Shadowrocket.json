@@ -39,6 +39,7 @@ PROCESS-NAME,Claude,US-金融与Claude优先
 # Forced Proxy Domains
 DOMAIN,x.900820.xyz,PROXY
 DOMAIN-SUFFIX,900820.xyz,PROXY
+DOMAIN-SUFFIX,ai.com,PROXY
 DOMAIN-SUFFIX,alt1-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt2-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt3-mtalk.google.com,PROXY
@@ -47,10 +48,14 @@ DOMAIN-SUFFIX,alt5-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt6-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt7-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt8-mtalk.google.com,PROXY
+DOMAIN-SUFFIX,chatgpt.com,PROXY
 DOMAIN-SUFFIX,github.com,PROXY
 DOMAIN-SUFFIX,googleapis.com,PROXY
 DOMAIN-SUFFIX,googleusercontent.com,PROXY
 DOMAIN-SUFFIX,mtalk.google.com,PROXY
+DOMAIN-SUFFIX,oaistatic.com,PROXY
+DOMAIN-SUFFIX,oaiusercontent.com,PROXY
+DOMAIN-SUFFIX,openai.com,PROXY
 DOMAIN-SUFFIX,run.app,PROXY
 DOMAIN-SUFFIX,telegram.org,PROXY
 
@@ -95,6 +100,7 @@ DOMAIN-SUFFIX,aliyuncdn.com,DIRECT
 DOMAIN-SUFFIX,tmall.com,DIRECT
 DOMAIN-SUFFIX,mmstat.com,DIRECT
 DOMAIN,us.weibo.com,PROXY
+DOMAIN,tv.apple.com,PROXY
 DOMAIN,dl.google.com,DIRECT
 DOMAIN,msg.umeng.com,DIRECT
 DOMAIN,app.adjust.com,DIRECT
@@ -102,8 +108,12 @@ DOMAIN,log.mmstat.com,DIRECT
 DOMAIN,geo2.adobe.com,REJECT
 DOMAIN,intl.iqiyi.com,PROXY
 DOMAIN,cc.tvbs.com.tw,PROXY
+DOMAIN,apps.apple.com,PROXY
+DOMAIN,www.icloud.com,PROXY
+DOMAIN,ocsp.apple.com,PROXY
 DOMAIN,sycm.mmstat.com,DIRECT
 DOMAIN,dl.l.google.com,DIRECT
+DOMAIN,books.apple.com,PROXY
 DOMAIN,mtalk.google.com,PROXY
 DOMAIN,fonts.gstatic.com,DIRECT
 DOMAIN,tv.applemusic.com,PROXY
@@ -118,18 +128,24 @@ DOMAIN,ip.istatmenus.app,DIRECT
 DOMAIN,msg.umengcloud.com,DIRECT
 DOMAIN,intl-rcd.iqiyi.com,PROXY
 DOMAIN,hamifans.emome.net,PROXY
+DOMAIN,gateway.icloud.com,PROXY
 DOMAIN,smtp.office365.com,DIRECT
 DOMAIN,wustat.windows.com,DIRECT
 DOMAIN,sms.imagetasks.com,DIRECT
+DOMAIN,linear.tv.apple.com,PROXY
 DOMAIN,hbolb.onwardsmg.com,PROXY
 DOMAIN,apiintl.biliapi.net,PROXY
+DOMAIN,news-edge.apple.com,PROXY
 DOMAIN,fonts.googleapis.com,PROXY
 DOMAIN,analytics.strava.com,DIRECT
 DOMAIN,mobileso.bz.mgtv.com,PROXY
 DOMAIN,link.theplatform.com,PROXY
 DOMAIN,a771.dscq.akamai.net,PROXY
+DOMAIN,testflight.apple.com,PROXY
 DOMAIN,assets1.xboxlive.com,PROXY
 DOMAIN,assets2.xboxlive.com,PROXY
+DOMAIN,beta.music.apple.com,PROXY
+DOMAIN,lookup-api.apple.com,PROXY
 DOMAIN,cacerts.digicert.com,PROXY
 DOMAIN,speedtest.macpaw.com,DIRECT
 DOMAIN,alt1-mtalk.google.com,PROXY
@@ -141,6 +157,9 @@ DOMAIN,alt6-mtalk.google.com,PROXY
 DOMAIN,alt7-mtalk.google.com,PROXY
 DOMAIN,alt8-mtalk.google.com,PROXY
 DOMAIN,update.googleapis.com,PROXY
+DOMAIN,news-assets.apple.com,PROXY
+DOMAIN,news-client.apple.com,PROXY
+DOMAIN,news-events.apple.com,PROXY
 DOMAIN,outlook.office365.com,DIRECT
 DOMAIN,apm-misaka.biliapi.net,PROXY
 DOMAIN,players.brightcove.net,PROXY
@@ -168,6 +187,7 @@ DOMAIN,hboasialive.akamaized.net,PROXY
 DOMAIN,avodmp4s3ww-a.akamaihd.net,PROXY
 DOMAIN,hbounify-prod.evergent.com,PROXY
 DOMAIN,cbsservice.aws.syncbak.com,PROXY
+DOMAIN,amp-api.podcasts.apple.com,PROXY
 DOMAIN,apple.comscoreresearch.com,PROXY
 DOMAIN,file-igamecj.akamaized.net,DIRECT
 DOMAIN,p-bstarstatic.akamaized.net,PROXY
@@ -181,6 +201,7 @@ DOMAIN,dmqdd6hw24ucf.cloudfront.net,PROXY
 DOMAIN,dai3fd1oh325y.cloudfront.net,PROXY
 DOMAIN,dfp6rglgjqszk.cloudfront.net,PROXY
 DOMAIN,d3c33hcgiwev3.cloudfront.net,PROXY
+DOMAIN,news-client-search.apple.com,PROXY
 DOMAIN,clientservices.googleapis.com,PROXY
 DOMAIN,d25xi40x97liuc.cloudfront.net,PROXY
 DOMAIN,d22qjgkvxw22r6.cloudfront.net,PROXY
@@ -6642,7 +6663,7 @@ DOMAIN-SUFFIX,ycombinator.com,PROXY
 DOMAIN-SUFFIX,itasoftware.com,PROXY
 DOMAIN-SUFFIX,webmproject.org,PROXY
 DOMAIN-SUFFIX,whatbrowser.org,PROXY
-DOMAIN-SUFFIX,smoot.apple.com,DIRECT
+DOMAIN-SUFFIX,smoot.apple.com,PROXY
 DOMAIN-SUFFIX,steamstatic.com,DIRECT
 DOMAIN-SUFFIX,broadcasthe.net,DIRECT
 DOMAIN-SUFFIX,accuweather.com,DIRECT
@@ -7192,7 +7213,7 @@ DOMAIN-SUFFIX,zzy1.quyaoya.com,REJECT
 DOMAIN-SUFFIX,trafficjunky.net,REJECT
 DOMAIN-SUFFIX,ad.caiyunapp.com,REJECT
 DOMAIN-SUFFIX,adx-api.hupu.com,REJECT
-DOMAIN-SUFFIX,iadsdk.apple.com,DIRECT
+DOMAIN-SUFFIX,iadsdk.apple.com,REJECT
 DOMAIN-SUFFIX,mobads.baidu.com,REJECT
 DOMAIN-SUFFIX,adshows.21cn.com,REJECT
 DOMAIN-SUFFIX,mobilead.kuwo.cn,REJECT
