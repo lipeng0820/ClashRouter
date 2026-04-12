@@ -72,7 +72,7 @@ FORCE_PROXY_EXACT_DOMAINS = [
 
 # For Clash-family outputs, forced-proxy domains should bypass user select group
 # (which may currently point to DIRECT) and always use an actual proxy group.
-FORCED_PROXY_POLICY_CLASH = "自动选择"
+FORCED_PROXY_POLICY_CLASH = "$app_name"
 
 # If Cloudflare/Google DoH is not reachable locally, Google-family DNS resolution may timeout.
 # Rewrite these to a reachable domestic DoH for stability.

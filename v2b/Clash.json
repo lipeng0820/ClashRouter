@@ -113,8 +113,6 @@ dns:
     "+.googleusercontent.com": "dhcp://system"
     "google.com": "dhcp://system"
     "+.google.com": "https://doh.pub/dns-query"
-    "+.google.com": "https://doh.pub/dns-query"
-    "+.googleapis.com": "https://doh.pub/dns-query"
     "+.googleapis.cn": "https://doh.pub/dns-query"
     "+.googlevideo.com": "https://doh.pub/dns-query"
     "+.gstatic.com": "https://doh.pub/dns-query"
@@ -328,21 +326,21 @@ proxy-groups:
 rules:
 
   # 强制代理域名 (Blocked/Unstable on DIRECT)
-  - DOMAIN,x.900820.xyz,自动选择
-  - DOMAIN-SUFFIX,900820.xyz,自动选择
-  - DOMAIN-SUFFIX,alt1-mtalk.google.com,自动选择
-  - DOMAIN-SUFFIX,alt2-mtalk.google.com,自动选择
-  - DOMAIN-SUFFIX,alt3-mtalk.google.com,自动选择
-  - DOMAIN-SUFFIX,alt4-mtalk.google.com,自动选择
-  - DOMAIN-SUFFIX,alt5-mtalk.google.com,自动选择
-  - DOMAIN-SUFFIX,alt6-mtalk.google.com,自动选择
-  - DOMAIN-SUFFIX,alt7-mtalk.google.com,自动选择
-  - DOMAIN-SUFFIX,alt8-mtalk.google.com,自动选择
-  - DOMAIN-SUFFIX,github.com,自动选择
-  - DOMAIN-SUFFIX,googleapis.com,自动选择
-  - DOMAIN-SUFFIX,googleusercontent.com,自动选择
-  - DOMAIN-SUFFIX,mtalk.google.com,自动选择
-  - DOMAIN-SUFFIX,telegram.org,自动选择
+  - DOMAIN,x.900820.xyz,$app_name
+  - DOMAIN-SUFFIX,900820.xyz,$app_name
+  - DOMAIN-SUFFIX,alt1-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt2-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt3-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt4-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt5-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt6-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt7-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,alt8-mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,github.com,$app_name
+  - DOMAIN-SUFFIX,googleapis.com,$app_name
+  - DOMAIN-SUFFIX,googleusercontent.com,$app_name
+  - DOMAIN-SUFFIX,mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,telegram.org,$app_name
 
   # 兼容性直连域名 (Avoid CN .com Misroute)
   - DOMAIN-SUFFIX,aigei.com,DIRECT
