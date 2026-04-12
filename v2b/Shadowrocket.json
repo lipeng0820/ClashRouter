@@ -17,43 +17,61 @@ dns-direct-fallback-proxy = true
 udp-policy-not-supported-behaviour = REJECT
 
 [Proxy Group]
-# 首选 US 美丽合众，故障后回落其他美国节点，再回落到当前用户选择
+# 金融业务首选 US 美丽合众，故障后回落其他美国节点，再回落到当前用户选择
 US-其他节点 = fallback, policy-regex-filter=(?=.*(US|USA|United States|美国))^((?!(美丽合众)).)*$, interval=300, timeout=5, url=http://www.gstatic.com/generate_204, hidden=1
-US-AI与金融优先 = fallback, US 美丽合众, US-其他节点, PROXY, interval=300, timeout=5, url=http://www.gstatic.com/generate_204
+US-金融优先 = fallback, US 美丽合众, US-其他节点, PROXY, interval=300, timeout=5, url=http://www.gstatic.com/generate_204
 
-US-金融与Claude优先 = fallback, US 美丽合众, US-其他节点, PROXY, interval=300, timeout=5, url=http://www.gstatic.com/generate_204
+# AI 服务固定出口，默认锁定首个候选节点，避免跨 IP
+AI固定出口 = select, US 美丽合众, US-其他节点, PROXY
+
+
+
+
 
 [Rule]
 
-# Capital One / PayPal / Claude iOS App
-DOMAIN-KEYWORD,capitalone,US-AI与金融优先
-DOMAIN-SUFFIX,capitalone.com,US-AI与金融优先
-DOMAIN-SUFFIX,capitalone360.com,US-AI与金融优先
-DOMAIN-SUFFIX,paypal.com,US-AI与金融优先
-DOMAIN-SUFFIX,paypal.me,US-AI与金融优先
-DOMAIN-SUFFIX,paypalobjects.com,US-AI与金融优先
-DOMAIN-SUFFIX,paypal-mktg.com,US-AI与金融优先
-DOMAIN-SUFFIX,claude.ai,US-AI与金融优先
-DOMAIN-SUFFIX,anthropic.com,US-AI与金融优先
-DOMAIN-SUFFIX,anthropic.ai,US-AI与金融优先
-PROCESS-NAME,Claude,US-AI与金融优先
-DOMAIN-SUFFIX,chatgpt.com,US-AI与金融优先
-DOMAIN-SUFFIX,openai.com,US-AI与金融优先
-DOMAIN-SUFFIX,oaistatic.com,US-AI与金融优先
-DOMAIN-SUFFIX,oaiusercontent.com,US-AI与金融优先
-DOMAIN-SUFFIX,ai.com,US-AI与金融优先
-PROCESS-NAME,ChatGPT,US-AI与金融优先
-DOMAIN-SUFFIX,gemini.google.com,US-AI与金融优先
-DOMAIN-SUFFIX,bard.google.com,US-AI与金融优先
-DOMAIN-SUFFIX,aistudio.google.com,US-AI与金融优先
-DOMAIN-KEYWORD,generativelanguage,US-AI与金融优先
-DOMAIN-SUFFIX,perplexity.ai,US-AI与金融优先
-PROCESS-NAME,Perplexity,US-AI与金融优先
+# Finance requiring stable US failover
+DOMAIN-KEYWORD,capitalone,US-金融优先
+DOMAIN-SUFFIX,capitalone.com,US-金融优先
+DOMAIN-SUFFIX,capitalone360.com,US-金融优先
+DOMAIN-SUFFIX,paypal.com,US-金融优先
+DOMAIN-SUFFIX,paypal.me,US-金融优先
+DOMAIN-SUFFIX,paypalobjects.com,US-金融优先
+DOMAIN-SUFFIX,paypal-mktg.com,US-金融优先
+
+# AI services pinned to a fixed egress
+DOMAIN-SUFFIX,chatgpt.com,AI固定出口
+DOMAIN-SUFFIX,openai.com,AI固定出口
+DOMAIN-SUFFIX,oaistatic.com,AI固定出口
+DOMAIN-SUFFIX,oaiusercontent.com,AI固定出口
+DOMAIN-SUFFIX,ai.com,AI固定出口
+DOMAIN-SUFFIX,statsig.com,AI固定出口
+DOMAIN-SUFFIX,browser-intake-datadoghq.com,AI固定出口
+DOMAIN-SUFFIX,livekit.cloud,AI固定出口
+DOMAIN-SUFFIX,api-iam.intercom.io,AI固定出口
+DOMAIN-SUFFIX,bing.com,AI固定出口
+DOMAIN-SUFFIX,bingapis.com,AI固定出口
+DOMAIN-SUFFIX,claude.ai,AI固定出口
+DOMAIN-SUFFIX,anthropic.com,AI固定出口
+DOMAIN-SUFFIX,anthropic.ai,AI固定出口
+DOMAIN-SUFFIX,gemini.google.com,AI固定出口
+DOMAIN-SUFFIX,bard.google.com,AI固定出口
+DOMAIN-SUFFIX,aistudio.google.com,AI固定出口
+DOMAIN-SUFFIX,generativelanguage.googleapis.com,AI固定出口
+DOMAIN-SUFFIX,googleapis.com,AI固定出口
+DOMAIN-SUFFIX,googleusercontent.com,AI固定出口
+DOMAIN-SUFFIX,gstatic.com,AI固定出口
+DOMAIN-SUFFIX,accounts.google.com,AI固定出口
+DOMAIN-SUFFIX,apis.google.com,AI固定出口
+DOMAIN-SUFFIX,ogs.google.com,AI固定出口
+DOMAIN-SUFFIX,perplexity.ai,AI固定出口
+PROCESS-NAME,Claude,AI固定出口
+PROCESS-NAME,ChatGPT,AI固定出口
+PROCESS-NAME,Perplexity,AI固定出口
 
 # Forced Proxy Domains
 DOMAIN,x.900820.xyz,PROXY
 DOMAIN-SUFFIX,900820.xyz,PROXY
-DOMAIN-SUFFIX,ai.com,PROXY
 DOMAIN-SUFFIX,alt1-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt2-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt3-mtalk.google.com,PROXY
@@ -62,14 +80,8 @@ DOMAIN-SUFFIX,alt5-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt6-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt7-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt8-mtalk.google.com,PROXY
-DOMAIN-SUFFIX,chatgpt.com,PROXY
 DOMAIN-SUFFIX,github.com,PROXY
-DOMAIN-SUFFIX,googleapis.com,PROXY
-DOMAIN-SUFFIX,googleusercontent.com,PROXY
 DOMAIN-SUFFIX,mtalk.google.com,PROXY
-DOMAIN-SUFFIX,oaistatic.com,PROXY
-DOMAIN-SUFFIX,oaiusercontent.com,PROXY
-DOMAIN-SUFFIX,openai.com,PROXY
 DOMAIN-SUFFIX,run.app,PROXY
 DOMAIN-SUFFIX,telegram.org,PROXY
 

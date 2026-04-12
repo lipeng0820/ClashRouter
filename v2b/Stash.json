@@ -269,16 +269,46 @@ dns:
 proxies:
 
 proxy-groups:
+  - { name: "AI固定出口", type: select, proxies: ["自动选择"] }
   - { name: "$app_name", type: select, proxies: ["自动选择", "故障转移", "DIRECT"] }
   - { name: "自动选择", type: url-test, proxies: [], url: "http://www.gstatic.com/generate_204", interval: 300, tolerance: 50 }
   - { name: "故障转移", type: fallback, proxies: [], url: "http://www.gstatic.com/generate_204", interval: 300 }
 
 rules:
 
+  # AI 服务固定出口 (Avoid Cross-IP Split)
+  - DOMAIN-SUFFIX,chatgpt.com,AI固定出口
+  - DOMAIN-SUFFIX,openai.com,AI固定出口
+  - DOMAIN-SUFFIX,oaistatic.com,AI固定出口
+  - DOMAIN-SUFFIX,oaiusercontent.com,AI固定出口
+  - DOMAIN-SUFFIX,ai.com,AI固定出口
+  - DOMAIN-SUFFIX,statsig.com,AI固定出口
+  - DOMAIN-SUFFIX,browser-intake-datadoghq.com,AI固定出口
+  - DOMAIN-SUFFIX,livekit.cloud,AI固定出口
+  - DOMAIN-SUFFIX,api-iam.intercom.io,AI固定出口
+  - DOMAIN-SUFFIX,bing.com,AI固定出口
+  - DOMAIN-SUFFIX,bingapis.com,AI固定出口
+  - DOMAIN-SUFFIX,claude.ai,AI固定出口
+  - DOMAIN-SUFFIX,anthropic.com,AI固定出口
+  - DOMAIN-SUFFIX,anthropic.ai,AI固定出口
+  - DOMAIN-SUFFIX,gemini.google.com,AI固定出口
+  - DOMAIN-SUFFIX,bard.google.com,AI固定出口
+  - DOMAIN-SUFFIX,aistudio.google.com,AI固定出口
+  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,AI固定出口
+  - DOMAIN-SUFFIX,googleapis.com,AI固定出口
+  - DOMAIN-SUFFIX,googleusercontent.com,AI固定出口
+  - DOMAIN-SUFFIX,gstatic.com,AI固定出口
+  - DOMAIN-SUFFIX,accounts.google.com,AI固定出口
+  - DOMAIN-SUFFIX,apis.google.com,AI固定出口
+  - DOMAIN-SUFFIX,ogs.google.com,AI固定出口
+  - DOMAIN-SUFFIX,perplexity.ai,AI固定出口
+  - PROCESS-NAME,Claude,AI固定出口
+  - PROCESS-NAME,ChatGPT,AI固定出口
+  - PROCESS-NAME,Perplexity,AI固定出口
+
   # 强制代理域名 (Blocked/Unstable on DIRECT)
   - DOMAIN,x.900820.xyz,$app_name
   - DOMAIN-SUFFIX,900820.xyz,$app_name
-  - DOMAIN-SUFFIX,ai.com,$app_name
   - DOMAIN-SUFFIX,alt1-mtalk.google.com,$app_name
   - DOMAIN-SUFFIX,alt2-mtalk.google.com,$app_name
   - DOMAIN-SUFFIX,alt3-mtalk.google.com,$app_name
@@ -287,14 +317,8 @@ rules:
   - DOMAIN-SUFFIX,alt6-mtalk.google.com,$app_name
   - DOMAIN-SUFFIX,alt7-mtalk.google.com,$app_name
   - DOMAIN-SUFFIX,alt8-mtalk.google.com,$app_name
-  - DOMAIN-SUFFIX,chatgpt.com,$app_name
   - DOMAIN-SUFFIX,github.com,$app_name
-  - DOMAIN-SUFFIX,googleapis.com,$app_name
-  - DOMAIN-SUFFIX,googleusercontent.com,$app_name
   - DOMAIN-SUFFIX,mtalk.google.com,$app_name
-  - DOMAIN-SUFFIX,oaistatic.com,$app_name
-  - DOMAIN-SUFFIX,oaiusercontent.com,$app_name
-  - DOMAIN-SUFFIX,openai.com,$app_name
   - DOMAIN-SUFFIX,run.app,$app_name
   - DOMAIN-SUFFIX,telegram.org,$app_name
 

@@ -127,12 +127,52 @@ for _d in FORCE_PROXY_DOMAINS:
 for _d in FORCE_PROXY_EXACT_DOMAINS:
     SMART_OVERRIDES[_d] = "PROXY"
 
-# Shadowrocket: US priority routing chain for Capital One / PayPal / Claude iOS
+# Sensitive AI services are prone to "abnormal traffic" checks if page/auth/api
+# requests are split across multiple exits. Pin them to a dedicated egress group.
+AI_FIXED_POLICY = "AI固定出口"
+AI_FIXED_DOMAIN_RULES = [
+    ("DOMAIN-SUFFIX", "chatgpt.com"),
+    ("DOMAIN-SUFFIX", "openai.com"),
+    ("DOMAIN-SUFFIX", "oaistatic.com"),
+    ("DOMAIN-SUFFIX", "oaiusercontent.com"),
+    ("DOMAIN-SUFFIX", "ai.com"),
+    ("DOMAIN-SUFFIX", "statsig.com"),
+    ("DOMAIN-SUFFIX", "browser-intake-datadoghq.com"),
+    ("DOMAIN-SUFFIX", "livekit.cloud"),
+    ("DOMAIN-SUFFIX", "api-iam.intercom.io"),
+    ("DOMAIN-SUFFIX", "bing.com"),
+    ("DOMAIN-SUFFIX", "bingapis.com"),
+    ("DOMAIN-SUFFIX", "claude.ai"),
+    ("DOMAIN-SUFFIX", "anthropic.com"),
+    ("DOMAIN-SUFFIX", "anthropic.ai"),
+    ("DOMAIN-SUFFIX", "gemini.google.com"),
+    ("DOMAIN-SUFFIX", "bard.google.com"),
+    ("DOMAIN-SUFFIX", "aistudio.google.com"),
+    ("DOMAIN-SUFFIX", "generativelanguage.googleapis.com"),
+    ("DOMAIN-SUFFIX", "googleapis.com"),
+    ("DOMAIN-SUFFIX", "googleusercontent.com"),
+    ("DOMAIN-SUFFIX", "gstatic.com"),
+    ("DOMAIN-SUFFIX", "accounts.google.com"),
+    ("DOMAIN-SUFFIX", "apis.google.com"),
+    ("DOMAIN-SUFFIX", "ogs.google.com"),
+    ("DOMAIN-SUFFIX", "perplexity.ai"),
+]
+AI_FIXED_PROCESS_RULES = [
+    "Claude",
+    "ChatGPT",
+    "Perplexity",
+]
+AI_FIXED_DOMAIN_SUFFIXES = {
+    payload for rtype, payload in AI_FIXED_DOMAIN_RULES if rtype == "DOMAIN-SUFFIX"
+}
+AI_FIXED_RULE_KEYS = set(AI_FIXED_DOMAIN_RULES) | {("PROCESS-NAME", p) for p in AI_FIXED_PROCESS_RULES}
+
+# Shadowrocket: separate finance failover from AI fixed-egress traffic
 SR_US_PRIMARY_POLICY = "US 美丽合众"
 SR_US_BACKUP_POLICY = "US-其他节点"
-SR_US_PRIORITY_POLICY = "US-AI与金融优先"
+SR_US_FINANCE_POLICY = "US-金融优先"
 SR_US_BACKUP_REGEX = "(?=.*(US|USA|United States|美国))^((?!(美丽合众)).)*$"
-SR_US_PRIORITY_RULES = [
+SR_US_FINANCE_RULES = [
     ("DOMAIN-KEYWORD", "capitalone"),
     ("DOMAIN-SUFFIX", "capitalone.com"),
     ("DOMAIN-SUFFIX", "capitalone360.com"),
@@ -140,23 +180,63 @@ SR_US_PRIORITY_RULES = [
     ("DOMAIN-SUFFIX", "paypal.me"),
     ("DOMAIN-SUFFIX", "paypalobjects.com"),
     ("DOMAIN-SUFFIX", "paypal-mktg.com"),
-    ("DOMAIN-SUFFIX", "claude.ai"),
-    ("DOMAIN-SUFFIX", "anthropic.com"),
-    ("DOMAIN-SUFFIX", "anthropic.ai"),
-    ("PROCESS-NAME", "Claude"),
-    ("DOMAIN-SUFFIX", "chatgpt.com"),
-    ("DOMAIN-SUFFIX", "openai.com"),
-    ("DOMAIN-SUFFIX", "oaistatic.com"),
-    ("DOMAIN-SUFFIX", "oaiusercontent.com"),
-    ("DOMAIN-SUFFIX", "ai.com"),
-    ("PROCESS-NAME", "ChatGPT"),
-    ("DOMAIN-SUFFIX", "gemini.google.com"),
-    ("DOMAIN-SUFFIX", "bard.google.com"),
-    ("DOMAIN-SUFFIX", "aistudio.google.com"),
-    ("DOMAIN-KEYWORD", "generativelanguage"),
-    ("DOMAIN-SUFFIX", "perplexity.ai"),
-    ("PROCESS-NAME", "Perplexity"),
 ]
+SR_US_FINANCE_RULE_KEYS = set(SR_US_FINANCE_RULES)
+
+def top_level_yaml_section_bounds(lines, section_name):
+    s_idx = -1
+    e_idx = len(lines)
+    header = f"{section_name}:"
+    for i, l in enumerate(lines):
+        if l.strip() == header:
+            s_idx = i
+            break
+    if s_idx == -1:
+        return -1, -1
+    for i in range(s_idx + 1, len(lines)):
+        if lines[i].strip() and not lines[i].startswith(' '):
+            e_idx = i
+            break
+    return s_idx, e_idx
+
+def extract_clash_proxy_names(lines):
+    p_s_idx, p_e_idx = top_level_yaml_section_bounds(lines, "proxies")
+    if p_s_idx == -1:
+        return []
+    names = []
+    for l in lines[p_s_idx + 1:p_e_idx]:
+        m = re.search(r'name:\s*(?:"([^"]+)"|\'([^\']+)\'|([^,}]+))', l)
+        if not m:
+            continue
+        name = next((g for g in m.groups() if g), "").strip()
+        if name:
+            names.append(name)
+    deduped = []
+    seen = set()
+    for name in names:
+        if name in seen:
+            continue
+        seen.add(name)
+        deduped.append(name)
+    return deduped
+
+def ensure_clash_proxy_groups(lines):
+    g_s_idx, g_e_idx = top_level_yaml_section_bounds(lines, "proxy-groups")
+    if g_s_idx == -1:
+        return lines
+    proxy_names = extract_clash_proxy_names(lines) or ["自动选择"]
+    proxies = ", ".join(json.dumps(name, ensure_ascii=False) for name in proxy_names)
+    managed_line = f'  - {{ name: "{AI_FIXED_POLICY}", type: select, proxies: [{proxies}] }}\n'
+    preserved = []
+    for l in lines[g_s_idx + 1:g_e_idx]:
+        if re.search(r'name:\s*"?AI固定出口"?', l):
+            continue
+        preserved.append(l)
+    new_lines = lines[:g_s_idx + 1]
+    new_lines.append(managed_line)
+    new_lines.extend(preserved)
+    new_lines.extend(lines[g_e_idx:])
+    return new_lines
 
 def parse_md_rules(md_path):
     if not os.path.exists(md_path): return []
@@ -228,6 +308,7 @@ def parse_md_rules(md_path):
 def process_clash(file_path, rules):
     with open(file_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()
+    lines = ensure_clash_proxy_groups(lines)
     rules_idx = -1
     for i, l in enumerate(lines):
         s = l.strip()
@@ -274,11 +355,20 @@ def process_clash(file_path, rules):
                 final_lines.append(f'    - "*.{d}"\n')
                 final_lines.append(f'    - "{d}"\n')
 
+    if AI_FIXED_DOMAIN_RULES or AI_FIXED_PROCESS_RULES:
+        final_lines.append('\n  # AI 服务固定出口 (Avoid Cross-IP Split)\n')
+        for rtype, payload in AI_FIXED_DOMAIN_RULES:
+            final_lines.append(f'  - {rtype},{payload},{AI_FIXED_POLICY}\n')
+        for proc in AI_FIXED_PROCESS_RULES:
+            final_lines.append(f'  - PROCESS-NAME,{proc},{AI_FIXED_POLICY}\n')
+
     if FORCE_PROXY_EXACT_DOMAINS or FORCE_PROXY_DOMAINS:
         final_lines.append('\n  # 强制代理域名 (Blocked/Unstable on DIRECT)\n')
         for d in FORCE_PROXY_EXACT_DOMAINS:
             final_lines.append(f'  - DOMAIN,{d},{FORCED_PROXY_POLICY_CLASH}\n')
         for d in FORCE_PROXY_DOMAINS:
+            if d in AI_FIXED_DOMAIN_SUFFIXES:
+                continue
             final_lines.append(f'  - DOMAIN-SUFFIX,{d},{FORCED_PROXY_POLICY_CLASH}\n')
 
     if FORCE_DIRECT_DOMAINS:
@@ -294,6 +384,8 @@ def process_clash(file_path, rules):
 
     match_policy = '$app_name'
     for r in rules:
+        if (r['type'], r['payload']) in AI_FIXED_RULE_KEYS:
+            continue
         policy = '$app_name' if r['policy'] == 'PROXY' else r['policy']
         if r['type'] == 'MATCH':
             match_policy = policy
@@ -307,6 +399,7 @@ def process_clash(file_path, rules):
 
 def process_surfboard(file_path, rules):
     with open(file_path, 'r', encoding='utf-8') as f: lines = f.readlines()
+    lines = ensure_surfboard_proxy_groups(lines)
     r_idx = -1
     for i, l in enumerate(lines):
         if l.strip() == '[Rule]': r_idx = i; break
@@ -320,11 +413,18 @@ def process_surfboard(file_path, rules):
                 l = f'skip-proxy = {curr}, ' + ', '.join([f'*.{d}, {d}' for d in missing]) + '\n'
         new_lines.append(l)
 
+    if AI_FIXED_DOMAIN_RULES:
+        new_lines.append('\n# AI Fixed Egress\n')
+        for rtype, payload in AI_FIXED_DOMAIN_RULES:
+            new_lines.append(f'{rtype},{payload},{AI_FIXED_POLICY}\n')
+
     if FORCE_PROXY_EXACT_DOMAINS or FORCE_PROXY_DOMAINS:
         new_lines.append('\n# Forced Proxy Domains\n')
         for d in FORCE_PROXY_EXACT_DOMAINS:
             new_lines.append(f'DOMAIN,{d},{FORCED_PROXY_POLICY_CLASH}\n')
         for d in FORCE_PROXY_DOMAINS:
+            if d in AI_FIXED_DOMAIN_SUFFIXES:
+                continue
             new_lines.append(f'DOMAIN-SUFFIX,{d},{FORCED_PROXY_POLICY_CLASH}\n')
 
     if FORCE_DIRECT_DOMAINS:
@@ -336,6 +436,8 @@ def process_surfboard(file_path, rules):
     for hb in HARDBONES: new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
     final_policy = '$app_name'
     for r in rules:
+        if (r['type'], r['payload']) in AI_FIXED_RULE_KEYS:
+            continue
         p = '$app_name' if r['policy'] == 'PROXY' else r['policy']
         if r['type'] == 'MATCH':
             final_policy = p
@@ -361,17 +463,51 @@ def section_bounds(lines, section_name):
             break
     return s_idx, e_idx
 
+def ensure_surfboard_proxy_groups(lines):
+    p_s_idx, p_e_idx = section_bounds(lines, "Proxy Group")
+    if p_s_idx == -1:
+        return lines
+    managed_prefix = f'{AI_FIXED_POLICY} ='
+    managed_line = f'{AI_FIXED_POLICY} = select, proxies-read-from-subscriber\n'
+    preserved = []
+    for l in lines[p_s_idx + 1:p_e_idx]:
+        if l.strip().startswith(managed_prefix):
+            continue
+        preserved.append(l)
+    new_lines = lines[:p_s_idx + 1]
+    inserted = False
+    for l in preserved:
+        new_lines.append(l)
+        if not inserted and l.strip().startswith('$app_name ='):
+            new_lines.append(managed_line)
+            inserted = True
+    if not inserted:
+        new_lines.append(managed_line)
+    new_lines.extend(lines[p_e_idx:])
+    return new_lines
+
 def ensure_shadowrocket_proxy_groups(lines):
     p_s_idx, p_e_idx = section_bounds(lines, "Proxy Group")
     r_s_idx, _ = section_bounds(lines, "Rule")
 
-    managed_comment = '# 首选 US 美丽合众，故障后回落其他美国节点，再回落到当前用户选择'
+    finance_comment = '# 金融业务首选 US 美丽合众，故障后回落其他美国节点，再回落到当前用户选择'
+    ai_comment = '# AI 服务固定出口，默认锁定首个候选节点，避免跨 IP'
+    legacy_comment = '# 首选 US 美丽合众，故障后回落其他美国节点，再回落到当前用户选择'
     managed_lines = [
-        f'{managed_comment}\n',
+        f'{finance_comment}\n',
         f'{SR_US_BACKUP_POLICY} = fallback, policy-regex-filter={SR_US_BACKUP_REGEX}, interval=300, timeout=5, url=http://www.gstatic.com/generate_204, hidden=1\n',
-        f'{SR_US_PRIORITY_POLICY} = fallback, {SR_US_PRIMARY_POLICY}, {SR_US_BACKUP_POLICY}, PROXY, interval=300, timeout=5, url=http://www.gstatic.com/generate_204\n'
+        f'{SR_US_FINANCE_POLICY} = fallback, {SR_US_PRIMARY_POLICY}, {SR_US_BACKUP_POLICY}, PROXY, interval=300, timeout=5, url=http://www.gstatic.com/generate_204\n',
+        '\n',
+        f'{ai_comment}\n',
+        f'{AI_FIXED_POLICY} = select, {SR_US_PRIMARY_POLICY}, {SR_US_BACKUP_POLICY}, PROXY\n',
     ]
-    managed_prefixes = (f'{SR_US_BACKUP_POLICY} =', f'{SR_US_PRIORITY_POLICY} =')
+    managed_prefixes = (
+        f'{SR_US_BACKUP_POLICY} =',
+        f'{SR_US_FINANCE_POLICY} =',
+        'US-AI与金融优先 =',
+        'US-金融与Claude优先 =',
+        f'{AI_FIXED_POLICY} =',
+    )
 
     if p_s_idx == -1:
         insert_idx = r_s_idx if r_s_idx != -1 else len(lines)
@@ -387,7 +523,7 @@ def ensure_shadowrocket_proxy_groups(lines):
     preserved = []
     for l in lines[p_s_idx + 1:p_e_idx]:
         stripped = l.strip()
-        if stripped == managed_comment:
+        if stripped in {finance_comment, ai_comment, legacy_comment}:
             continue
         if any(stripped.startswith(prefix) for prefix in managed_prefixes):
             continue
@@ -415,15 +551,23 @@ def process_shadowrocket(file_path, rules):
             if m: l = l.strip() + ', ' + ', '.join([f'*.{d}, {d}' for d in m]) + '\n'
         new_lines.append(l)
 
-    new_lines.append('\n# Capital One / PayPal / Claude iOS App\n')
-    for rtype, payload in SR_US_PRIORITY_RULES:
-        new_lines.append(f'{rtype},{payload},{SR_US_PRIORITY_POLICY}\n')
+    new_lines.append('\n# Finance requiring stable US failover\n')
+    for rtype, payload in SR_US_FINANCE_RULES:
+        new_lines.append(f'{rtype},{payload},{SR_US_FINANCE_POLICY}\n')
+
+    new_lines.append('\n# AI services pinned to a fixed egress\n')
+    for rtype, payload in AI_FIXED_DOMAIN_RULES:
+        new_lines.append(f'{rtype},{payload},{AI_FIXED_POLICY}\n')
+    for proc in AI_FIXED_PROCESS_RULES:
+        new_lines.append(f'PROCESS-NAME,{proc},{AI_FIXED_POLICY}\n')
 
     if FORCE_PROXY_EXACT_DOMAINS or FORCE_PROXY_DOMAINS:
         new_lines.append('\n# Forced Proxy Domains\n')
         for d in FORCE_PROXY_EXACT_DOMAINS:
             new_lines.append(f'DOMAIN,{d},PROXY\n')
         for d in FORCE_PROXY_DOMAINS:
+            if d in AI_FIXED_DOMAIN_SUFFIXES:
+                continue
             new_lines.append(f'DOMAIN-SUFFIX,{d},PROXY\n')
 
     if FORCE_DIRECT_DOMAINS:
@@ -435,6 +579,8 @@ def process_shadowrocket(file_path, rules):
     for hb in HARDBONES: new_lines.append(f'DOMAIN-SUFFIX,{hb},DIRECT\n')
     final_policy = 'PROXY'
     for r in rules:
+        if (r['type'], r['payload']) in AI_FIXED_RULE_KEYS or (r['type'], r['payload']) in SR_US_FINANCE_RULE_KEYS:
+            continue
         p = 'PROXY' if r['policy'] == 'PROXY' else r['policy']
         if r['type'] == 'MATCH':
             final_policy = p
@@ -458,7 +604,9 @@ def process_singbox(file_path, rules):
     if FORCE_PROXY_EXACT_DOMAINS or FORCE_PROXY_DOMAINS:
         if FORCE_PROXY_EXACT_DOMAINS:
             r_rules.append({"outbound": "proxy", "domain": FORCE_PROXY_EXACT_DOMAINS})
-        r_rules.append({"outbound": "proxy", "domain_suffix": FORCE_PROXY_DOMAINS})
+        remaining_force_proxy = [d for d in FORCE_PROXY_DOMAINS if d not in AI_FIXED_DOMAIN_SUFFIXES]
+        if remaining_force_proxy:
+            r_rules.append({"outbound": "proxy", "domain_suffix": remaining_force_proxy})
     r_rules.extend([{"outbound": "direct", "domain_suffix": local_suffix}, {"outbound": "direct", "ip_cidr": ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "::1/128"]}])
     for r in rules:
         out = "proxy" if r['policy'] == 'PROXY' else "direct" if r['policy'] == 'DIRECT' else "block"
