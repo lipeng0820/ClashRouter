@@ -71,7 +71,7 @@ DOMAIN-SUFFIX,aliyuncdn.com,DIRECT
 DOMAIN-SUFFIX,tmall.com,DIRECT
 DOMAIN-SUFFIX,mmstat.com,DIRECT
 DOMAIN,us.weibo.com,$app_name
-DOMAIN,dl.google.com,$app_name
+DOMAIN,dl.google.com,DIRECT
 DOMAIN,msg.umeng.com,DIRECT
 DOMAIN,app.adjust.com,DIRECT
 DOMAIN,log.mmstat.com,DIRECT
@@ -79,7 +79,7 @@ DOMAIN,geo2.adobe.com,REJECT
 DOMAIN,intl.iqiyi.com,$app_name
 DOMAIN,cc.tvbs.com.tw,$app_name
 DOMAIN,sycm.mmstat.com,DIRECT
-DOMAIN,dl.l.google.com,$app_name
+DOMAIN,dl.l.google.com,DIRECT
 DOMAIN,mtalk.google.com,$app_name
 DOMAIN,fonts.gstatic.com,DIRECT
 DOMAIN,tv.applemusic.com,$app_name
@@ -99,7 +99,7 @@ DOMAIN,wustat.windows.com,DIRECT
 DOMAIN,sms.imagetasks.com,DIRECT
 DOMAIN,hbolb.onwardsmg.com,$app_name
 DOMAIN,apiintl.biliapi.net,$app_name
-DOMAIN,fonts.googleapis.com,$app_name
+DOMAIN,fonts.googleapis.com,DIRECT
 DOMAIN,analytics.strava.com,DIRECT
 DOMAIN,mobileso.bz.mgtv.com,$app_name
 DOMAIN,link.theplatform.com,$app_name
@@ -116,7 +116,7 @@ DOMAIN,alt5-mtalk.google.com,$app_name
 DOMAIN,alt6-mtalk.google.com,$app_name
 DOMAIN,alt7-mtalk.google.com,$app_name
 DOMAIN,alt8-mtalk.google.com,$app_name
-DOMAIN,update.googleapis.com,$app_name
+DOMAIN,update.googleapis.com,DIRECT
 DOMAIN,outlook.office365.com,DIRECT
 DOMAIN,apm-misaka.biliapi.net,$app_name
 DOMAIN,players.brightcove.net,$app_name
@@ -134,7 +134,7 @@ DOMAIN,hboasia5-i.akamaihd.net,$app_name
 DOMAIN,youtubei.googleapis.com,$app_name
 DOMAIN,intel-cache.m.iqiyi.com,$app_name
 DOMAIN,clubhouse.pubnubapi.com,$app_name
-DOMAIN,translate.googleapis.com,$app_name
+DOMAIN,translate.googleapis.com,DIRECT
 DOMAIN,pubads.g.doubleclick.net,DIRECT
 DOMAIN,gamer2-cds.cdn.hinet.net,$app_name
 DOMAIN,cbsi.live.ott.irdeto.com,$app_name
@@ -157,7 +157,7 @@ DOMAIN,dmqdd6hw24ucf.cloudfront.net,$app_name
 DOMAIN,dai3fd1oh325y.cloudfront.net,$app_name
 DOMAIN,dfp6rglgjqszk.cloudfront.net,$app_name
 DOMAIN,d3c33hcgiwev3.cloudfront.net,$app_name
-DOMAIN,clientservices.googleapis.com,$app_name
+DOMAIN,clientservices.googleapis.com,DIRECT
 DOMAIN,d25xi40x97liuc.cloudfront.net,$app_name
 DOMAIN,d22qjgkvxw22r6.cloudfront.net,$app_name
 DOMAIN,d1v5ir2lpwr8os.cloudfront.net,$app_name
@@ -6709,7 +6709,7 @@ DOMAIN-SUFFIX,adsmart.yicha.cn,REJECT
 DOMAIN-SUFFIX,adsystem.wasu.tv,REJECT
 DOMAIN-SUFFIX,adx.xiaodutv.com,REJECT
 DOMAIN-SUFFIX,aecpm.alicdn.com,REJECT
-DOMAIN-SUFFIX,afd.l.google.com,$app_name
+DOMAIN-SUFFIX,afd.l.google.com,REJECT
 DOMAIN-SUFFIX,afpmm.alicdn.com,REJECT
 DOMAIN-SUFFIX,aishiguolong.com,REJECT
 DOMAIN-SUFFIX,alitui.weibo.com,REJECT
@@ -7554,7 +7554,7 @@ DOMAIN-SUFFIX,p.tencentmind.com,REJECT
 DOMAIN-SUFFIX,p1.18zhongyao.com,REJECT
 DOMAIN-SUFFIX,p215223.inclk.com,REJECT
 DOMAIN-SUFFIX,p215223.mycdn2.co,REJECT
-DOMAIN-SUFFIX,pagead.google.com,$app_name
+DOMAIN-SUFFIX,pagead.google.com,REJECT
 DOMAIN-SUFFIX,photo.xunhuaji.cn,REJECT
 DOMAIN-SUFFIX,photo.zhanhevr.cn,REJECT
 DOMAIN-SUFFIX,pic2016.ytqmx.com,REJECT
@@ -8342,7 +8342,7 @@ DOMAIN-SUFFIX,opgirl-tmp.adbxb.cn,REJECT
 DOMAIN-SUFFIX,p.skimresources.com,REJECT
 DOMAIN-SUFFIX,p215223.clksite.com,REJECT
 DOMAIN-SUFFIX,padsdel2.cdnads.com,REJECT
-DOMAIN-SUFFIX,pagead.l.google.com,$app_name
+DOMAIN-SUFFIX,pagead.l.google.com,REJECT
 DOMAIN-SUFFIX,partner.toutiao.com,REJECT
 DOMAIN-SUFFIX,partners.rochen.com,REJECT
 DOMAIN-SUFFIX,pcbrowser.dd.qq.com,REJECT
@@ -8600,7 +8600,7 @@ DOMAIN-SUFFIX,mg.games.sina.com.cn,REJECT
 DOMAIN-SUFFIX,mingxianshanghang.cn,REJECT
 DOMAIN-SUFFIX,mlb.did.ijinshan.com,REJECT
 DOMAIN-SUFFIX,mo.test.haloapps.com,REJECT
-DOMAIN-SUFFIX,mobileads.google.com,$app_name
+DOMAIN-SUFFIX,mobileads.google.com,REJECT
 DOMAIN-SUFFIX,motu.p4p.sina.com.cn,REJECT
 DOMAIN-SUFFIX,mpp.vindicosuite.com,REJECT
 DOMAIN-SUFFIX,mqqadr.reader.qq.com,REJECT
@@ -9218,7 +9218,7 @@ DOMAIN-SUFFIX,newloc.map.n.shifen.com,REJECT
 DOMAIN-SUFFIX,onepush.query.yahoo.com,REJECT
 DOMAIN-SUFFIX,oss-asq-static.11222.cn,REJECT
 DOMAIN-SUFFIX,p.clkservice.youdao.com,REJECT
-DOMAIN-SUFFIX,pagead-tpc.l.google.com,$app_name
+DOMAIN-SUFFIX,pagead-tpc.l.google.com,REJECT
 DOMAIN-SUFFIX,partners.keezmovies.com,REJECT
 DOMAIN-SUFFIX,partners.optiontide.com,REJECT
 DOMAIN-SUFFIX,partners.pornerbros.com,REJECT

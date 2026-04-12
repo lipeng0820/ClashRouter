@@ -165,7 +165,7 @@
                 ]
             },
             {
-                "outbound": "proxy",
+                "outbound": "direct",
                 "domain": [
                     "dl.google.com"
                 ]
@@ -213,7 +213,7 @@
                 ]
             },
             {
-                "outbound": "proxy",
+                "outbound": "direct",
                 "domain": [
                     "dl.l.google.com"
                 ]
@@ -333,7 +333,7 @@
                 ]
             },
             {
-                "outbound": "proxy",
+                "outbound": "direct",
                 "domain": [
                     "fonts.googleapis.com"
                 ]
@@ -435,7 +435,7 @@
                 ]
             },
             {
-                "outbound": "proxy",
+                "outbound": "direct",
                 "domain": [
                     "update.googleapis.com"
                 ]
@@ -543,7 +543,7 @@
                 ]
             },
             {
-                "outbound": "proxy",
+                "outbound": "direct",
                 "domain": [
                     "translate.googleapis.com"
                 ]
@@ -681,7 +681,7 @@
                 ]
             },
             {
-                "outbound": "proxy",
+                "outbound": "direct",
                 "domain": [
                     "clientservices.googleapis.com"
                 ]
@@ -39849,7 +39849,7 @@
                 ]
             },
             {
-                "outbound": "proxy",
+                "outbound": "block",
                 "domain_suffix": [
                     "afd.l.google.com"
                 ]
@@ -44919,7 +44919,7 @@
                 ]
             },
             {
-                "outbound": "proxy",
+                "outbound": "block",
                 "domain_suffix": [
                     "pagead.google.com"
                 ]
@@ -49647,7 +49647,7 @@
                 ]
             },
             {
-                "outbound": "proxy",
+                "outbound": "block",
                 "domain_suffix": [
                     "pagead.l.google.com"
                 ]
@@ -51195,7 +51195,7 @@
                 ]
             },
             {
-                "outbound": "proxy",
+                "outbound": "block",
                 "domain_suffix": [
                     "mobileads.google.com"
                 ]
@@ -54903,7 +54903,7 @@
                 ]
             },
             {
-                "outbound": "proxy",
+                "outbound": "block",
                 "domain_suffix": [
                     "pagead-tpc.l.google.com"
                 ]

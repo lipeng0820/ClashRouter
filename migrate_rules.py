@@ -84,9 +84,7 @@ DNS_POLICY_REWRITE = {
 BYPASS_DOMAINS = [
     "apple.com", "icloud.com", "itunes.apple.com", "mzstatic.com", 
     "aaplimg.com", "cdn-apple.com", "apple-dns.net", "ls.apple.com"
-] + HARDBONES + FORCE_DIRECT_DOMAINS + [
-    "googleapis.com", "googleusercontent.com", "google.com" # Exclude from Fake-IP to allow real IP resolution for IDE tools
-]
+] + HARDBONES + FORCE_DIRECT_DOMAINS
 
 # Smart Overrides: Force specific policies regardless of source file conflicts
 SMART_OVERRIDES = {
@@ -112,11 +110,7 @@ SMART_OVERRIDES = {
     "office.com": "DIRECT",
     # Media
     "bilibili.com": "DIRECT",
-    "hdslb.com": "DIRECT",
-    # Google Cloud Code / Antigravity (logs confirmed requirements)
-    "googleapis.com": "PROXY",
-    "googleusercontent.com": "PROXY",
-    "google.com": "PROXY"
+    "hdslb.com": "DIRECT"
 }
 for _d in FORCE_DIRECT_DOMAINS:
     SMART_OVERRIDES[_d] = "DIRECT"
@@ -277,10 +271,6 @@ def process_clash(file_path, rules):
     final_lines.append('\n  # 局域网及核心内网放行区 (LAN Bypass)\n')
     for cidr in ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "127.0.0.0/8", "100.64.0.0/10"]:
         final_lines.append(f'  - IP-CIDR,{cidr},DIRECT\n')
-
-    final_lines.append('\n  # 进程级强效分流 (macOS Specific)\n')
-    for proc in ["Code", "Antigravity", "AntigravityIDE", "gcloud"]:
-        final_lines.append(f'  - PROCESS-NAME,{proc},{FORCED_PROXY_POLICY_CLASH}\n')
 
     match_policy = '$app_name'
     for r in rules:

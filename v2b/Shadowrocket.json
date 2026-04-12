@@ -90,7 +90,7 @@ DOMAIN-SUFFIX,aliyuncdn.com,DIRECT
 DOMAIN-SUFFIX,tmall.com,DIRECT
 DOMAIN-SUFFIX,mmstat.com,DIRECT
 DOMAIN,us.weibo.com,PROXY
-DOMAIN,dl.google.com,PROXY
+DOMAIN,dl.google.com,DIRECT
 DOMAIN,msg.umeng.com,DIRECT
 DOMAIN,app.adjust.com,DIRECT
 DOMAIN,log.mmstat.com,DIRECT
@@ -98,7 +98,7 @@ DOMAIN,geo2.adobe.com,REJECT
 DOMAIN,intl.iqiyi.com,PROXY
 DOMAIN,cc.tvbs.com.tw,PROXY
 DOMAIN,sycm.mmstat.com,DIRECT
-DOMAIN,dl.l.google.com,PROXY
+DOMAIN,dl.l.google.com,DIRECT
 DOMAIN,mtalk.google.com,PROXY
 DOMAIN,fonts.gstatic.com,DIRECT
 DOMAIN,tv.applemusic.com,PROXY
@@ -118,7 +118,7 @@ DOMAIN,wustat.windows.com,DIRECT
 DOMAIN,sms.imagetasks.com,DIRECT
 DOMAIN,hbolb.onwardsmg.com,PROXY
 DOMAIN,apiintl.biliapi.net,PROXY
-DOMAIN,fonts.googleapis.com,PROXY
+DOMAIN,fonts.googleapis.com,DIRECT
 DOMAIN,analytics.strava.com,DIRECT
 DOMAIN,mobileso.bz.mgtv.com,PROXY
 DOMAIN,link.theplatform.com,PROXY
@@ -135,7 +135,7 @@ DOMAIN,alt5-mtalk.google.com,PROXY
 DOMAIN,alt6-mtalk.google.com,PROXY
 DOMAIN,alt7-mtalk.google.com,PROXY
 DOMAIN,alt8-mtalk.google.com,PROXY
-DOMAIN,update.googleapis.com,PROXY
+DOMAIN,update.googleapis.com,DIRECT
 DOMAIN,outlook.office365.com,DIRECT
 DOMAIN,apm-misaka.biliapi.net,PROXY
 DOMAIN,players.brightcove.net,PROXY
@@ -153,7 +153,7 @@ DOMAIN,hboasia5-i.akamaihd.net,PROXY
 DOMAIN,youtubei.googleapis.com,PROXY
 DOMAIN,intel-cache.m.iqiyi.com,PROXY
 DOMAIN,clubhouse.pubnubapi.com,PROXY
-DOMAIN,translate.googleapis.com,PROXY
+DOMAIN,translate.googleapis.com,DIRECT
 DOMAIN,pubads.g.doubleclick.net,DIRECT
 DOMAIN,gamer2-cds.cdn.hinet.net,PROXY
 DOMAIN,cbsi.live.ott.irdeto.com,PROXY
@@ -176,7 +176,7 @@ DOMAIN,dmqdd6hw24ucf.cloudfront.net,PROXY
 DOMAIN,dai3fd1oh325y.cloudfront.net,PROXY
 DOMAIN,dfp6rglgjqszk.cloudfront.net,PROXY
 DOMAIN,d3c33hcgiwev3.cloudfront.net,PROXY
-DOMAIN,clientservices.googleapis.com,PROXY
+DOMAIN,clientservices.googleapis.com,DIRECT
 DOMAIN,d25xi40x97liuc.cloudfront.net,PROXY
 DOMAIN,d22qjgkvxw22r6.cloudfront.net,PROXY
 DOMAIN,d1v5ir2lpwr8os.cloudfront.net,PROXY
@@ -6728,7 +6728,7 @@ DOMAIN-SUFFIX,adsmart.yicha.cn,REJECT
 DOMAIN-SUFFIX,adsystem.wasu.tv,REJECT
 DOMAIN-SUFFIX,adx.xiaodutv.com,REJECT
 DOMAIN-SUFFIX,aecpm.alicdn.com,REJECT
-DOMAIN-SUFFIX,afd.l.google.com,PROXY
+DOMAIN-SUFFIX,afd.l.google.com,REJECT
 DOMAIN-SUFFIX,afpmm.alicdn.com,REJECT
 DOMAIN-SUFFIX,aishiguolong.com,REJECT
 DOMAIN-SUFFIX,alitui.weibo.com,REJECT
@@ -7573,7 +7573,7 @@ DOMAIN-SUFFIX,p.tencentmind.com,REJECT
 DOMAIN-SUFFIX,p1.18zhongyao.com,REJECT
 DOMAIN-SUFFIX,p215223.inclk.com,REJECT
 DOMAIN-SUFFIX,p215223.mycdn2.co,REJECT
-DOMAIN-SUFFIX,pagead.google.com,PROXY
+DOMAIN-SUFFIX,pagead.google.com,REJECT
 DOMAIN-SUFFIX,photo.xunhuaji.cn,REJECT
 DOMAIN-SUFFIX,photo.zhanhevr.cn,REJECT
 DOMAIN-SUFFIX,pic2016.ytqmx.com,REJECT
@@ -8361,7 +8361,7 @@ DOMAIN-SUFFIX,opgirl-tmp.adbxb.cn,REJECT
 DOMAIN-SUFFIX,p.skimresources.com,REJECT
 DOMAIN-SUFFIX,p215223.clksite.com,REJECT
 DOMAIN-SUFFIX,padsdel2.cdnads.com,REJECT
-DOMAIN-SUFFIX,pagead.l.google.com,PROXY
+DOMAIN-SUFFIX,pagead.l.google.com,REJECT
 DOMAIN-SUFFIX,partner.toutiao.com,REJECT
 DOMAIN-SUFFIX,partners.rochen.com,REJECT
 DOMAIN-SUFFIX,pcbrowser.dd.qq.com,REJECT
@@ -8619,7 +8619,7 @@ DOMAIN-SUFFIX,mg.games.sina.com.cn,REJECT
 DOMAIN-SUFFIX,mingxianshanghang.cn,REJECT
 DOMAIN-SUFFIX,mlb.did.ijinshan.com,REJECT
 DOMAIN-SUFFIX,mo.test.haloapps.com,REJECT
-DOMAIN-SUFFIX,mobileads.google.com,PROXY
+DOMAIN-SUFFIX,mobileads.google.com,REJECT
 DOMAIN-SUFFIX,motu.p4p.sina.com.cn,REJECT
 DOMAIN-SUFFIX,mpp.vindicosuite.com,REJECT
 DOMAIN-SUFFIX,mqqadr.reader.qq.com,REJECT
@@ -9237,7 +9237,7 @@ DOMAIN-SUFFIX,newloc.map.n.shifen.com,REJECT
 DOMAIN-SUFFIX,onepush.query.yahoo.com,REJECT
 DOMAIN-SUFFIX,oss-asq-static.11222.cn,REJECT
 DOMAIN-SUFFIX,p.clkservice.youdao.com,REJECT
-DOMAIN-SUFFIX,pagead-tpc.l.google.com,PROXY
+DOMAIN-SUFFIX,pagead-tpc.l.google.com,REJECT
 DOMAIN-SUFFIX,partners.keezmovies.com,REJECT
 DOMAIN-SUFFIX,partners.optiontide.com,REJECT
 DOMAIN-SUFFIX,partners.pornerbros.com,REJECT
