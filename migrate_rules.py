@@ -61,7 +61,8 @@ DEFAULT_FORCE_PROXY_DOMAINS = [
     "googleapis.com", 
     "googleusercontent.com",
     "github.com",
-    "telegram.org"
+    "telegram.org",
+    "run.app"
 ]
 FORCE_PROXY_DOMAINS = sorted(set(DEFAULT_FORCE_PROXY_DOMAINS + load_custom_proxy_domains(CUSTOM_PROXY_DOMAINS_PATH)))
 

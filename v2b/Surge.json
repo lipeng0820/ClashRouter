@@ -290,6 +290,7 @@ rules:
   - DOMAIN-SUFFIX,googleapis.com,$app_name
   - DOMAIN-SUFFIX,googleusercontent.com,$app_name
   - DOMAIN-SUFFIX,mtalk.google.com,$app_name
+  - DOMAIN-SUFFIX,run.app,$app_name
   - DOMAIN-SUFFIX,telegram.org,$app_name
 
   # 兼容性直连域名 (Avoid CN .com Misroute)
