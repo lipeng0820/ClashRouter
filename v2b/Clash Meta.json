@@ -338,7 +338,11 @@ rules:
   - DOMAIN-SUFFIX,alt6-mtalk.google.com,自动选择
   - DOMAIN-SUFFIX,alt7-mtalk.google.com,自动选择
   - DOMAIN-SUFFIX,alt8-mtalk.google.com,自动选择
+  - DOMAIN-SUFFIX,github.com,自动选择
+  - DOMAIN-SUFFIX,googleapis.com,自动选择
+  - DOMAIN-SUFFIX,googleusercontent.com,自动选择
   - DOMAIN-SUFFIX,mtalk.google.com,自动选择
+  - DOMAIN-SUFFIX,telegram.org,自动选择
 
   # 兼容性直连域名 (Avoid CN .com Misroute)
   - DOMAIN-SUFFIX,aigei.com,DIRECT
@@ -416,7 +420,7 @@ rules:
   - DOMAIN,sms.imagetasks.com,DIRECT
   - DOMAIN,hbolb.onwardsmg.com,$app_name
   - DOMAIN,apiintl.biliapi.net,$app_name
-  - DOMAIN,fonts.googleapis.com,DIRECT
+  - DOMAIN,fonts.googleapis.com,$app_name
   - DOMAIN,analytics.strava.com,DIRECT
   - DOMAIN,mobileso.bz.mgtv.com,$app_name
   - DOMAIN,link.theplatform.com,$app_name
@@ -433,7 +437,7 @@ rules:
   - DOMAIN,alt6-mtalk.google.com,$app_name
   - DOMAIN,alt7-mtalk.google.com,$app_name
   - DOMAIN,alt8-mtalk.google.com,$app_name
-  - DOMAIN,update.googleapis.com,DIRECT
+  - DOMAIN,update.googleapis.com,$app_name
   - DOMAIN,outlook.office365.com,DIRECT
   - DOMAIN,apm-misaka.biliapi.net,$app_name
   - DOMAIN,players.brightcove.net,$app_name
@@ -451,7 +455,7 @@ rules:
   - DOMAIN,youtubei.googleapis.com,$app_name
   - DOMAIN,intel-cache.m.iqiyi.com,$app_name
   - DOMAIN,clubhouse.pubnubapi.com,$app_name
-  - DOMAIN,translate.googleapis.com,DIRECT
+  - DOMAIN,translate.googleapis.com,$app_name
   - DOMAIN,pubads.g.doubleclick.net,DIRECT
   - DOMAIN,gamer2-cds.cdn.hinet.net,$app_name
   - DOMAIN,cbsi.live.ott.irdeto.com,$app_name
@@ -474,7 +478,7 @@ rules:
   - DOMAIN,dai3fd1oh325y.cloudfront.net,$app_name
   - DOMAIN,dfp6rglgjqszk.cloudfront.net,$app_name
   - DOMAIN,d3c33hcgiwev3.cloudfront.net,$app_name
-  - DOMAIN,clientservices.googleapis.com,DIRECT
+  - DOMAIN,clientservices.googleapis.com,$app_name
   - DOMAIN,d25xi40x97liuc.cloudfront.net,$app_name
   - DOMAIN,d22qjgkvxw22r6.cloudfront.net,$app_name
   - DOMAIN,d1v5ir2lpwr8os.cloudfront.net,$app_name

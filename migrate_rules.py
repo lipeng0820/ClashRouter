@@ -58,6 +58,10 @@ FORCE_DIRECT_DOMAINS = sorted(set(DEFAULT_FORCE_DIRECT_DOMAINS + load_custom_dir
 # Reliability proxy list (speed-priority default keeps this minimal).
 DEFAULT_FORCE_PROXY_DOMAINS = [
     "900820.xyz",
+    "googleapis.com", 
+    "googleusercontent.com",
+    "github.com",
+    "telegram.org"
 ]
 FORCE_PROXY_DOMAINS = sorted(set(DEFAULT_FORCE_PROXY_DOMAINS + load_custom_proxy_domains(CUSTOM_PROXY_DOMAINS_PATH)))
 

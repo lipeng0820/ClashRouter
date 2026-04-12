@@ -103,7 +103,11 @@
                     "alt6-mtalk.google.com",
                     "alt7-mtalk.google.com",
                     "alt8-mtalk.google.com",
-                    "mtalk.google.com"
+                    "github.com",
+                    "googleapis.com",
+                    "googleusercontent.com",
+                    "mtalk.google.com",
+                    "telegram.org"
                 ]
             },
             {
@@ -333,7 +337,7 @@
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "fonts.googleapis.com"
                 ]
@@ -435,7 +439,7 @@
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "update.googleapis.com"
                 ]
@@ -543,7 +547,7 @@
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "translate.googleapis.com"
                 ]
@@ -681,7 +685,7 @@
                 ]
             },
             {
-                "outbound": "direct",
+                "outbound": "proxy",
                 "domain": [
                     "clientservices.googleapis.com"
                 ]

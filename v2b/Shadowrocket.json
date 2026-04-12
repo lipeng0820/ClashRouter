@@ -47,7 +47,11 @@ DOMAIN-SUFFIX,alt5-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt6-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt7-mtalk.google.com,PROXY
 DOMAIN-SUFFIX,alt8-mtalk.google.com,PROXY
+DOMAIN-SUFFIX,github.com,PROXY
+DOMAIN-SUFFIX,googleapis.com,PROXY
+DOMAIN-SUFFIX,googleusercontent.com,PROXY
 DOMAIN-SUFFIX,mtalk.google.com,PROXY
+DOMAIN-SUFFIX,telegram.org,PROXY
 
 # Compatibility Direct Domains
 DOMAIN-SUFFIX,aigei.com,DIRECT
@@ -118,7 +122,7 @@ DOMAIN,wustat.windows.com,DIRECT
 DOMAIN,sms.imagetasks.com,DIRECT
 DOMAIN,hbolb.onwardsmg.com,PROXY
 DOMAIN,apiintl.biliapi.net,PROXY
-DOMAIN,fonts.googleapis.com,DIRECT
+DOMAIN,fonts.googleapis.com,PROXY
 DOMAIN,analytics.strava.com,DIRECT
 DOMAIN,mobileso.bz.mgtv.com,PROXY
 DOMAIN,link.theplatform.com,PROXY
@@ -135,7 +139,7 @@ DOMAIN,alt5-mtalk.google.com,PROXY
 DOMAIN,alt6-mtalk.google.com,PROXY
 DOMAIN,alt7-mtalk.google.com,PROXY
 DOMAIN,alt8-mtalk.google.com,PROXY
-DOMAIN,update.googleapis.com,DIRECT
+DOMAIN,update.googleapis.com,PROXY
 DOMAIN,outlook.office365.com,DIRECT
 DOMAIN,apm-misaka.biliapi.net,PROXY
 DOMAIN,players.brightcove.net,PROXY
@@ -153,7 +157,7 @@ DOMAIN,hboasia5-i.akamaihd.net,PROXY
 DOMAIN,youtubei.googleapis.com,PROXY
 DOMAIN,intel-cache.m.iqiyi.com,PROXY
 DOMAIN,clubhouse.pubnubapi.com,PROXY
-DOMAIN,translate.googleapis.com,DIRECT
+DOMAIN,translate.googleapis.com,PROXY
 DOMAIN,pubads.g.doubleclick.net,DIRECT
 DOMAIN,gamer2-cds.cdn.hinet.net,PROXY
 DOMAIN,cbsi.live.ott.irdeto.com,PROXY
@@ -176,7 +180,7 @@ DOMAIN,dmqdd6hw24ucf.cloudfront.net,PROXY
 DOMAIN,dai3fd1oh325y.cloudfront.net,PROXY
 DOMAIN,dfp6rglgjqszk.cloudfront.net,PROXY
 DOMAIN,d3c33hcgiwev3.cloudfront.net,PROXY
-DOMAIN,clientservices.googleapis.com,DIRECT
+DOMAIN,clientservices.googleapis.com,PROXY
 DOMAIN,d25xi40x97liuc.cloudfront.net,PROXY
 DOMAIN,d22qjgkvxw22r6.cloudfront.net,PROXY
 DOMAIN,d1v5ir2lpwr8os.cloudfront.net,PROXY
