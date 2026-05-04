@@ -103,6 +103,8 @@ dns:
     "+.mmstat.com": "dhcp://system"
     "aigei.com": "dhcp://system"
     "+.aigei.com": "dhcp://system"
+    "push.apple.com": "https://dns.cloudflare.com/dns-query"
+    "+.push.apple.com": "https://dns.cloudflare.com/dns-query"
     "apple.com": "dhcp://system"
     "+.apple.com": "dhcp://system"
     "icloud.com": "dhcp://system"
@@ -341,20 +343,20 @@ rules:
   - DOMAIN-SUFFIX,claude.ai,AI固定出口
   - DOMAIN-SUFFIX,anthropic.com,AI固定出口
   - DOMAIN-SUFFIX,anthropic.ai,AI固定出口
-  - DOMAIN-SUFFIX,gemini.google.com,AI固定出口
-  - DOMAIN-SUFFIX,bard.google.com,AI固定出口
-  - DOMAIN-SUFFIX,aistudio.google.com,AI固定出口
-  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,AI固定出口
-  - DOMAIN-SUFFIX,googleapis.com,AI固定出口
-  - DOMAIN-SUFFIX,googleusercontent.com,AI固定出口
+  - DOMAIN-SUFFIX,gemini.google.com,$app_name
+  - DOMAIN-SUFFIX,bard.google.com,$app_name
+  - DOMAIN-SUFFIX,aistudio.google.com,$app_name
+  - DOMAIN-SUFFIX,generativelanguage.googleapis.com,$app_name
+  - DOMAIN-SUFFIX,googleapis.com,$app_name
+  - DOMAIN-SUFFIX,googleusercontent.com,$app_name
   - DOMAIN-SUFFIX,gstatic.com,AI固定出口
-  - DOMAIN-SUFFIX,accounts.google.com,AI固定出口
-  - DOMAIN-SUFFIX,apis.google.com,AI固定出口
-  - DOMAIN-SUFFIX,ogs.google.com,AI固定出口
+  - DOMAIN-SUFFIX,accounts.google.com,$app_name
+  - DOMAIN-SUFFIX,apis.google.com,$app_name
+  - DOMAIN-SUFFIX,ogs.google.com,$app_name
   - DOMAIN-SUFFIX,perplexity.ai,AI固定出口
-  - PROCESS-NAME,Claude,AI固定出口
-  - PROCESS-NAME,ChatGPT,AI固定出口
-  - PROCESS-NAME,Perplexity,AI固定出口
+#   - PROCESS-NAME,Claude,AI固定出口
+#   - PROCESS-NAME,ChatGPT,AI固定出口
+#   - PROCESS-NAME,Perplexity,AI固定出口
 
   # 强制代理域名 (Blocked/Unstable on DIRECT)
   - DOMAIN,x.900820.xyz,$app_name
@@ -420,6 +422,12 @@ rules:
   - IP-CIDR,127.0.0.0/8,DIRECT
   - IP-CIDR,100.64.0.0/10,DIRECT
   - DOMAIN,us.weibo.com,$app_name
+
+  # Apple Push Notification Service (APNS) — X/Twitter & TG push
+  - DOMAIN-SUFFIX,push.apple.com,$app_name
+  - DOMAIN-SUFFIX,gateway.push.apple.com,$app_name
+  - DOMAIN-SUFFIX,api.push.apple.com,$app_name
+  - DOMAIN-SUFFIX,sandbox.push.apple.com,$app_name
   - DOMAIN,tv.apple.com,$app_name
   - DOMAIN,dl.google.com,DIRECT
   - DOMAIN,msg.umeng.com,DIRECT
@@ -765,7 +773,7 @@ rules:
   - DOMAIN-SUFFIX,ibm.com,DIRECT
   - DOMAIN-SUFFIX,ntp.org,DIRECT
   - DOMAIN-SUFFIX,plex.tv,DIRECT
-  - DOMAIN-SUFFIX,bing.com,$app_name
+  - DOMAIN-SUFFIX,bing.com,AI固定出口
   - DOMAIN-SUFFIX,live.com,$app_name
   - DOMAIN-SUFFIX,live.net,$app_name
   - DOMAIN-SUFFIX,lync.com,$app_name
@@ -1837,7 +1845,7 @@ rules:
   - DOMAIN-SUFFIX,zhihu.com,DIRECT
   - DOMAIN-SUFFIX,zhimg.com,DIRECT
   - DOMAIN-SUFFIX,900820.xyz,$app_name
-  - DOMAIN-SUFFIX,openai.com,$app_name
+  - DOMAIN-SUFFIX,openai.com,AI固定出口
   - DOMAIN-SUFFIX,akadns.net,$app_name
   - DOMAIN-SUFFIX,msauth.net,$app_name
   - DOMAIN-SUFFIX,msecnd.net,$app_name
@@ -3725,7 +3733,7 @@ rules:
   - DOMAIN-SUFFIX,weather.com,DIRECT
   - DOMAIN-SUFFIX,weidian.com,DIRECT
   - DOMAIN-SUFFIX,yizhibo.com,DIRECT
-  - DOMAIN-SUFFIX,bingapis.com,$app_name
+  - DOMAIN-SUFFIX,bingapis.com,AI固定出口
   - DOMAIN-SUFFIX,azurerms.com,$app_name
   - DOMAIN-SUFFIX,cloudapp.net,$app_name
   - DOMAIN-SUFFIX,msftauth.net,$app_name
@@ -10361,15 +10369,15 @@ rules:
   - IP-CIDR6,2001:b28:f23d::/48,$app_name,no-resolve
   - IP-CIDR6,2001:b28:f23f::/48,$app_name,no-resolve
   - IP-CIDR6,2001:b28:f23c::/48,$app_name,no-resolve
-  - PROCESS-NAME,fdm,DIRECT
-  - PROCESS-NAME,Folx,DIRECT
-  - PROCESS-NAME,aria2c,DIRECT
-  - PROCESS-NAME,Weiyun,DIRECT
-  - PROCESS-NAME,Thunder,DIRECT
-  - PROCESS-NAME,uTorrent,DIRECT
-  - PROCESS-NAME,WebTorrent,DIRECT
-  - PROCESS-NAME,NetTransport,DIRECT
-  - PROCESS-NAME,Transmission,DIRECT
-  - PROCESS-NAME,DownloadService,DIRECT
-  - PROCESS-NAME,WebTorrent Helper,DIRECT
+#   - PROCESS-NAME,fdm,DIRECT
+#   - PROCESS-NAME,Folx,DIRECT
+#   - PROCESS-NAME,aria2c,DIRECT
+#   - PROCESS-NAME,Weiyun,DIRECT
+#   - PROCESS-NAME,Thunder,DIRECT
+#   - PROCESS-NAME,uTorrent,DIRECT
+#   - PROCESS-NAME,WebTorrent,DIRECT
+#   - PROCESS-NAME,NetTransport,DIRECT
+#   - PROCESS-NAME,Transmission,DIRECT
+#   - PROCESS-NAME,DownloadService,DIRECT
+#   - PROCESS-NAME,WebTorrent Helper,DIRECT
   - MATCH,$app_name

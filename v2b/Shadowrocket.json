@@ -55,13 +55,13 @@ DOMAIN-SUFFIX,bingapis.com,AI固定出口
 DOMAIN-SUFFIX,claude.ai,AI固定出口
 DOMAIN-SUFFIX,anthropic.com,AI固定出口
 DOMAIN-SUFFIX,anthropic.ai,AI固定出口
-DOMAIN-SUFFIX,gemini.google.com,AI固定出口
-DOMAIN-SUFFIX,bard.google.com,AI固定出口
-DOMAIN-SUFFIX,aistudio.google.com,AI固定出口
-DOMAIN-SUFFIX,generativelanguage.googleapis.com,AI固定出口
-DOMAIN-SUFFIX,alkalimakersuite-pa.googleapis.com,AI固定出口
-DOMAIN-SUFFIX,proactivebackend-pa.googleapis.com,AI固定出口
-DOMAIN-SUFFIX,accounts.google.com,AI固定出口
+DOMAIN-SUFFIX,gemini.google.com,PROXY
+DOMAIN-SUFFIX,bard.google.com,PROXY
+DOMAIN-SUFFIX,aistudio.google.com,PROXY
+DOMAIN-SUFFIX,generativelanguage.googleapis.com,PROXY
+DOMAIN-SUFFIX,alkalimakersuite-pa.googleapis.com,PROXY
+DOMAIN-SUFFIX,proactivebackend-pa.googleapis.com,PROXY
+DOMAIN-SUFFIX,accounts.google.com,PROXY
 DOMAIN-SUFFIX,perplexity.ai,AI固定出口
 PROCESS-NAME,Claude,AI固定出口
 PROCESS-NAME,ChatGPT,AI固定出口
@@ -124,6 +124,11 @@ DOMAIN-SUFFIX,aliyuncdn.com,DIRECT
 DOMAIN-SUFFIX,tmall.com,DIRECT
 DOMAIN-SUFFIX,mmstat.com,DIRECT
 DOMAIN,us.weibo.com,PROXY
+# Apple Push Notification Service (APNS) — X/Twitter & TG push
+DOMAIN-SUFFIX,push.apple.com,PROXY
+DOMAIN-SUFFIX,gateway.push.apple.com,PROXY
+DOMAIN-SUFFIX,api.push.apple.com,PROXY
+DOMAIN-SUFFIX,sandbox.push.apple.com,PROXY
 DOMAIN,tv.apple.com,PROXY
 DOMAIN,dl.google.com,DIRECT
 DOMAIN,msg.umeng.com,DIRECT
